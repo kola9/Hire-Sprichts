@@ -1,0 +1,4 @@
+# Identifiants admin (mot de passe haché) : jamais dans le dépôt
+data/admin.json
+# APK publiés depuis l'admin
+apks/*.apk
