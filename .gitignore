@@ -1,7 +1,7 @@
-# Identifiants admin (mot de passe haché) : jamais dans le dépôt
-data/admin.json
-# APK publiés depuis l'admin
-apks/*.apk
+# Dépendances et fichiers locaux de Wrangler
+node_modules/
+.wrangler/
 
-# Clés secrètes (ADMIN_KEY, SETUP_KEY)
-config.local.php
+# Variables locales (jamais dans le dépôt)
+.dev.vars
+.env

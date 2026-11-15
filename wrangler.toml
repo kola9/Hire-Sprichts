@@ -1,0 +1,18 @@
+# Projet Cloudflare Pages SÉPARÉ : site de téléchargement de l'appli Sprichts
+name = "sprichts-download"
+pages_build_output_dir = "public"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Dépôt PUBLIC où sont publiés les APK (GitHub Releases)
+GITHUB_RELEASES_REPO = "olabusyness-prog/Sprichts"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sprichts-download"
+database_id = "A_REMPLACER_APRES_CREATION"
+migrations_dir = "migrations"
+
+# Secrets (jamais dans ce fichier) — à définir avec
+#   npx wrangler pages secret put <NOM> --project-name sprichts-download
+#   ACCESS_TEAM_DOMAIN, ACCESS_AUD, ADMIN_EMAILS

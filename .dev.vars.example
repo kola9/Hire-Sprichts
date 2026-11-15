@@ -1,0 +1,3 @@
+# Copier en .dev.vars pour le développement local (wrangler pages dev).
+# Ouvre l'admin sans Cloudflare Access, UNIQUEMENT sur localhost / 127.0.0.1.
+DEV_BYPASS_ACCESS=1

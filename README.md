@@ -1,48 +1,67 @@
-# Sprichts – plateforme de téléchargement APK
+# Sprichts – site de téléchargement de l'appli
 
-Petit site en PHP natif (sans base de données) pour publier les versions APK de l'appli Sprichts et les installer directement depuis un téléphone.
+Site vitrine et de téléchargement de l'appli Android **Sprichts**, hébergé sur **Cloudflare Pages** (gratuit).
+
+- Les **APK** sont publiés dans les **GitHub Releases** du dépôt public [`olabusyness-prog/Sprichts`](https://github.com/olabusyness-prog/Sprichts/releases). Le site n'enregistre que les liens.
+- La **liste des versions** et les **compteurs** sont dans une base **Cloudflare D1**.
+- L'**admin** (`/admin/`) est protégé par **Cloudflare Access** (connexion par e-mail + code à usage unique) et chaque appel d'admin revérifie le jeton Access.
 
 ## Structure
 
 | Fichier / dossier | Rôle |
 |---|---|
-| `index.php` | Page publique : dernière version, QR code, anciennes versions |
-| `download.php` | Envoie l'APK (`?id=latest` = toujours la dernière version) et compte les téléchargements |
-| `admin.php` | Connexion, publication et suppression de versions — **accès caché** (voir plus bas) |
-| `config.php` | Nom du site, slogan, valeurs par défaut |
-| `config.local.php` | **Secrets** (`ADMIN_KEY`, `SETUP_KEY`) — hors Git, à créer et à envoyer sur l'hébergeur |
-| `data/` | `versions.json` (liste des versions) + `admin.json` (mot de passe haché) — inaccessible depuis le web |
-| `apks/` | Les fichiers APK envoyés — inaccessible directement, tout passe par `download.php` |
+| `public/index.html` + `public/assets/site.js` | Page publique ; la dernière version, le QR code et l'historique viennent de `/api/versions` |
+| `public/admin/index.html` | Tableau de bord : publier un lien GitHub Releases, supprimer une version, voir les compteurs |
+| `public/_worker.js` | Le seul code serveur : `/download.php`, `/api/versions`, `/api/admin/*` |
+| `public/_routes.json` | Limite le Worker à ces chemins : tout le reste est statique (gratuit et illimité) |
+| `public/_headers`, `_redirects`, `404.html` | En-têtes de sécurité, anciennes adresses `.php`, page introuvable |
+| `migrations/` | Schéma de la base D1 |
+| `test/` | Tests (jeton Access, liens autorisés) : `npm test` |
 
-## Mise en ligne sur InfinityFree
+## Adresses
 
-1. Crée `config.local.php` (il n'est pas dans Git) avec deux valeurs longues et aléatoires :
-   ```php
-   <?php
-   define('ADMIN_KEY', 'une-cle-secrete-pour-entrer-dans-l-admin');
-   define('SETUP_KEY', 'une-autre-cle-pour-creer-le-mot-de-passe');
-   ```
-2. Envoie **tout le contenu** du dossier dans `htdocs/` par FTP (FileZilla) ou avec le gestionnaire de fichiers, **y compris `config.local.php`**. N'oublie pas les fichiers `.htaccess` (fichiers cachés).
-3. Ouvre `https://ton-site/admin.php?k=TON_ADMIN_KEY`, saisis la `SETUP_KEY` et choisis ton mot de passe admin.
-4. Publie ta première version : nom (`1.0.0`), numéro de build (le `versionCode` de ton `build.gradle`), APK et notes.
+| Adresse | Effet |
+|---|---|
+| `/` | Page publique |
+| `/download.php?id=latest` | Compte le téléchargement et redirige vers l'APK le plus récent (lien du QR code) |
+| `/download.php?id=<id>` | Idem pour une version précise |
+| `/admin/` | Administration (Cloudflare Access) |
 
-## Accès à l'espace admin (caché)
+## Publier une nouvelle version
 
-Aucun lien vers l'admin n'apparaît sur le site. Pour y entrer :
+1. Sur GitHub : **Releases › Draft a new release**, tag `v1.2.0`, glisse le `.apk`, **Publish release**.
+2. Sur `/admin/` : choisis l'APK dans la liste, indique le build (`versionCode` du `build.gradle`), **Publier**.
 
-- Ouvre **`admin.php?k=ADMIN_KEY`** (mets cette adresse en favori). La clé disparaît aussitôt de la barre d'adresse et la session reste ouverte.
-- Sans la bonne clé, `admin.php` répond **404**, comme si la page n'existait pas.
-- La connexion par mot de passe reste obligatoire derrière : la clé cache la page, le mot de passe la protège.
-- Pour changer d'accès (clé divulguée…), modifie `ADMIN_KEY` dans `config.local.php`.
+Seuls les liens `https://github.com/olabusyness-prog/Sprichts/releases/download/<tag>/<fichier>.apk` sont acceptés.
 
-## Limites d'InfinityFree
-
-- **Taille max d'un fichier : 10 Mo.** Si ton APK dépasse 10 Mo, publie-le sur **GitHub Releases** et colle le lien dans le champ « lien externe » : la page et le QR code fonctionnent pareil.
-- Leurs conditions d'utilisation interdisent les sites dont le but principal est l'hébergement de fichiers. Une page de téléchargement pour ta propre appli est tolérée en général, mais l'option « lien externe » évite tout souci.
-
-## Test en local
+## Développement local
 
 ```bash
-php -S 127.0.0.1:8000
+npm install
+cp .dev.vars.example .dev.vars        # ouvre l'admin sans Access, UNIQUEMENT sur localhost
+npm run db:migrate:local
+npm run dev                           # http://127.0.0.1:8788
+npm test
 ```
-puis ouvre http://127.0.0.1:8000
+
+## Configuration Cloudflare (une seule fois)
+
+Projet Pages **séparé** : `sprichts-download`. Il ne touche à aucun autre projet du compte.
+
+1. `npx wrangler d1 create sprichts-download`, puis reporter le `database_id` dans `wrangler.toml`.
+2. `npm run db:migrate:remote`
+3. `npx wrangler pages project create sprichts-download --production-branch main`
+4. Cloudflare Zero Trust › Access › Applications › **Self-hosted** : domaine `sprichts-download.pages.dev`, chemins `admin` et `api/admin`, règle « Emails = ton e-mail », connexion **One-time PIN**.
+5. Secrets (jamais dans Git) :
+   ```bash
+   npx wrangler pages secret put ACCESS_TEAM_DOMAIN --project-name sprichts-download   # ex. monequipe.cloudflareaccess.com
+   npx wrangler pages secret put ACCESS_AUD         --project-name sprichts-download   # « Application Audience (AUD) Tag »
+   npx wrangler pages secret put ADMIN_EMAILS       --project-name sprichts-download   # ton e-mail
+   ```
+6. `npm run deploy`
+
+Tant que ces trois secrets ne sont pas définis, l'admin reste **fermé** (réponse 503).
+
+## Ancienne version PHP
+
+La version PHP (prévue pour InfinityFree, jamais mise en ligne) est conservée dans Git sous le tag `avant-cloudflare`.

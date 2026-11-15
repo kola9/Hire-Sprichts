@@ -1,0 +1,3 @@
+# Anciennes adresses PHP → nouvelles pages
+/index.php  /        301
+/admin.php  /admin/  301
