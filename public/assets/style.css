@@ -23,6 +23,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }   /* l'attribut hidden l'emporte sur .btn / .badge */
 html { -webkit-text-size-adjust: 100%; }
 
 body {
@@ -320,6 +321,25 @@ tbody tr:hover { background: rgba(255,255,255,.03); }
                background: linear-gradient(100deg, #C9B8FF, var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .band span { color: var(--muted); font-size: .86rem; }
 
+/* Android / iPhone */
+.platforms { display: flex; flex-direction: column; gap: 18px; }
+.platforms.ios-first #iphone { order: -1; }
+.platform-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.badge.you { background: rgba(52,211,153,.14); color: #6EE7B7; border-color: rgba(52,211,153,.4); }
+.platform.is-you { border-color: rgba(244,185,66,.55);
+                   box-shadow: 0 0 0 1px rgba(244,185,66,.3), 0 24px 60px -24px rgba(244,185,66,.45), inset 0 1px 0 rgba(255,255,255,.06); }
+.platform .meta strong { color: var(--text); }
+.platform .cta { margin-top: 4px; }
+#iphone .version small { font-size: .95rem; }
+#iphone.release::before { background: linear-gradient(135deg, rgba(14,165,233,.16), transparent 45%, rgba(139,102,255,.14)); }
+.qr-frame img { display: block; width: 156px; height: 156px; }
+.ios-steps { list-style: none; margin: 22px 0 12px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ios-steps li { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px;
+                background: var(--glass); border: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+.ios-steps strong { color: var(--text); }
+.ios-steps .n { flex: none; width: 26px; height: 26px; border-radius: 9px; display: grid; place-items: center; font-weight: 800; font-size: .82rem;
+                color: #fff; background: linear-gradient(135deg, #0EA5E9, #4F46E5); }
+
 /* Fonctionnalités */
 .features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 .feature { padding: 24px; transition: transform .25s ease, border-color .25s ease; }
@@ -460,6 +480,8 @@ tbody tr:hover { background: rgba(255,255,255,.03); }
     .float-card { font-size: .74rem; padding: 8px 10px; }
     .fc-2 { display: none; }
     .modules, .modes, .needs { grid-template-columns: 1fr; }
+    .ios-steps { grid-template-columns: 1fr; }
+    .platform .cta .btn { width: 100%; }
     .needs-note { padding-left: 0; border-left: 0; padding-top: 20px; border-top: 1px solid var(--line); }
     .plan li { grid-template-columns: 1fr auto; }
     .plan li p { grid-column: 1 / -1; grid-row: 2; }

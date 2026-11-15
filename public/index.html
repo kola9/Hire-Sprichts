@@ -23,7 +23,9 @@
         <a class="nav-link" href="#fonctionnalites">Fonctionnalités</a>
         <a class="nav-link" href="#examen">Examen A2</a>
         <a class="nav-link" href="#installer">Installer</a>
+        <a class="nav-link" href="#iphone">iPhone</a>
         <a class="nav-link" href="#faq">Aide</a>
+        <a class="btn btn-gold" id="nav-ios" href="https://sprichts.pages.dev/" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg><span>Ouvrir sur iPhone</span></a>
         <a class="btn btn-gold" id="nav-download" href="/download.php?id=latest" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span>Télécharger</span></a>
     </div>
 </nav>
@@ -60,11 +62,43 @@
     <div><strong>100 %</strong><span>des explications en français</span></div>
 </section>
 
-<div id="release-slot">
-    <section class="card empty">
-        <img class="logo" src="/assets/logo.svg" alt="Sprichts" width="260" height="255">
-        <h2>La première version arrive bientôt</h2>
-        <p class="muted">Reviens très vite pour installer Sprichts sur ton téléphone.</p>
+<!-- ============ Télécharger : Android + iPhone ============ -->
+<div class="section-title" id="telecharger">
+    <div>
+        <div class="kicker">Télécharger</div>
+        <h2>Android ou iPhone : choisis ton téléphone</h2>
+    </div>
+</div>
+<div class="platforms" id="platforms">
+    <div id="release-slot">
+        <section class="card empty platform" id="android">
+            <img class="logo" src="/assets/logo.svg" alt="Sprichts" width="260" height="255">
+            <h2>La première version arrive bientôt</h2>
+            <p class="muted">Reviens très vite pour installer Sprichts sur ton téléphone.</p>
+        </section>
+    </div>
+
+    <section class="card release platform" id="iphone">
+        <div>
+            <div class="platform-badges"><span class="badge purple">Sur iPhone</span><span class="badge you" hidden>Ton téléphone</span></div>
+            <div class="version">Sprichts sur iPhone <small>sans App Store</small></div>
+            <p class="meta">Sprichts s'installe depuis <strong>Safari</strong> en 1 minute et s'ouvre ensuite depuis son icône, comme une vraie appli.</p>
+            <div class="cta">
+                <a class="btn btn-primary" href="https://sprichts.pages.dev/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg> Ouvrir Sprichts dans Safari</a>
+                <a class="btn" href="https://sprichts.pages.dev/guide/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg> Guide d'installation iPhone</a>
+            </div>
+            <ol class="ios-steps">
+                <li><span class="n">1</span><span>Ouvre le lien dans <strong>Safari</strong> (pas dans Chrome ni WhatsApp).</span></li>
+                <li><span class="n">2</span><span>Touche <strong>Partager</strong> ⬆️ puis <strong>Sur l'écran d'accueil</strong> › Ajouter.</span></li>
+                <li><span class="n">3</span><span>Ouvre Sprichts depuis son icône et entre ton <strong>code d'accès</strong>.</span></li>
+                <li><span class="n">4</span><span>Touche <strong>Autoriser</strong> quand Sprichts demande le micro.</span></li>
+            </ol>
+            <p class="small muted">Le lien s'est ouvert dans WhatsApp ? Touche ⋯ ou ⬆️, puis « Ouvrir dans Safari ».</p>
+        </div>
+        <div class="qr">
+            <div class="qr-frame"><img src="/assets/qr-iphone.svg" alt="QR code vers sprichts.pages.dev" width="156" height="156"></div>
+            <p>Scanne ce code avec l'appareil photo de l'iPhone.</p>
+        </div>
     </section>
 </div>
 
@@ -205,9 +239,10 @@
 <!-- ============ Installation ============ -->
 <div class="section-title" id="installer">
     <div>
-        <div class="kicker">Installation</div>
+        <div class="kicker">Installation sur Android</div>
         <h2>Prêt en 4 étapes</h2>
     </div>
+    <a class="btn" href="#iphone">Sur iPhone ? C'est par ici</a>
 </div>
 <div class="steps">
     <div class="card step">

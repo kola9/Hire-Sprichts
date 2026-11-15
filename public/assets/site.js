@@ -28,6 +28,40 @@
 
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    // ---------- Téléphone du visiteur : iPhone, Android ou ordinateur ----------
+    var ua = navigator.userAgent || '';
+    var device = (/iPhone|iPad|iPod/i.test(ua) || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1)) ? 'ios'
+        : /Android/i.test(ua) ? 'android' : 'desktop';
+
+    var ICON_SAFARI = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>';
+
+    // Met en avant la section qui correspond au téléphone (rappelé après chaque rendu)
+    function applyDevice() {
+        document.documentElement.setAttribute('data-device', device);
+        if (device === 'desktop') { return; }
+        var mine = document.getElementById(device === 'ios' ? 'iphone' : 'android');
+        if (mine) {
+            mine.classList.add('is-you');
+            var badge = mine.querySelector('.badge.you');
+            if (badge) { badge.hidden = false; }
+        }
+        if (device === 'ios') {
+            document.getElementById('platforms').classList.add('ios-first');
+            document.getElementById('nav-download').hidden = true;
+            document.getElementById('nav-ios').hidden = false;
+            document.getElementById('eyebrow-text').textContent = 'Disponible sur iPhone, depuis Safari';
+            document.getElementById('hero-cta').innerHTML =
+                '<a class="btn btn-primary" href="https://sprichts.pages.dev/" target="_blank" rel="noopener">' + ICON_SAFARI + ' Ouvrir Sprichts dans Safari</a>' +
+                '<a class="btn btn-ghost" href="#iphone">Comment installer ?</a>';
+            // La version et la taille décrivent l'APK Android : sans intérêt sur iPhone
+            document.getElementById('hero-chips').innerHTML =
+                '<span class="chip">Sur iPhone <strong>via Safari</strong></span>' +
+                '<span class="chip">Sans <strong>App Store</strong></span>' +
+                '<span class="chip">Niveau <strong>A2</strong></span>';
+        }
+    }
+    applyDevice();
+
     // Galerie : flèches
     var gallery = document.getElementById('gallery');
     document.querySelectorAll('[data-scroll]').forEach(function (b) {
@@ -63,15 +97,16 @@
             '<span class="chip">Mise à jour <strong>' + fmtDate(latest.created_at) + '</strong></span>';
 
         document.getElementById('release-slot').innerHTML =
-            '<section class="card release"><div>' +
-            '<span class="badge">Dernière version</span>' +
+            '<section class="card release platform" id="android"><div>' +
+            '<div class="platform-badges"><span class="badge purple">Sur Android</span><span class="badge">Dernière version</span>' +
+            '<span class="badge you" hidden>Ton téléphone</span></div>' +
             '<div class="version">v' + name + ' <small>build ' + Number(latest.version_code) + '</small></div>' +
             '<p class="meta">Publiée le ' + fmtDate(latest.created_at) + (latest.size ? ' · ' + fmtSize(latest.size) : '') +
             (total ? ' · ' + total + ' téléchargement' + (total > 1 ? 's' : '') : '') + '</p>' +
             '<a class="btn btn-primary" href="' + dl(latest.id) + '">' + ICON_DOWNLOAD + ' Télécharger v' + name + '</a>' +
             (latest.notes ? '<div class="notes"><h3>Nouveautés</h3><p>' + nl2br(latest.notes) + '</p></div>' : '') +
             '</div><div class="qr"><div class="qr-frame"><div id="qr"></div></div>' +
-            '<p>Sur ordinateur ? Scanne ce code avec ton téléphone.</p></div></section>';
+            '<p>Sur ordinateur ? Scanne ce code avec ton téléphone Android.</p></div></section>';
 
         if (older.length) {
             document.getElementById('older-slot').innerHTML =
@@ -93,5 +128,6 @@
                 correctLevel: QRCode.CorrectLevel.M
             });
         }
+        applyDevice();
     }
 })();
