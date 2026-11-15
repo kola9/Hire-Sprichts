@@ -10,7 +10,7 @@ GITHUB_RELEASES_REPO = "olabusyness-prog/Sprichts"
 [[d1_databases]]
 binding = "DB"
 database_name = "sprichts-download"
-database_id = "A_REMPLACER_APRES_CREATION"
+database_id = "c04f0bed-6d47-46a6-9dc1-253941e9dbe2"
 migrations_dir = "migrations"
 
 # Secrets (jamais dans ce fichier) — à définir avec
