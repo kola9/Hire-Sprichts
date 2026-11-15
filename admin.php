@@ -1,7 +1,25 @@
 <?php
 require __DIR__ . '/lib.php';
 
-$admin = read_json('admin.json', []);
+// ---------- Accès caché ----------
+// L'espace admin n'est lié nulle part. On y entre uniquement avec
+// admin.php?k=ADMIN_KEY ; la session retient ensuite l'ouverture.
+// Sans la clé, on répond comme si la page n'existait pas.
+if (isset($_GET['k']) && ADMIN_KEY !== '' && hash_equals(ADMIN_KEY, (string) $_GET['k'])) {
+    session_regenerate_id(true);
+    $_SESSION['admin_gate'] = true;
+    redirect('admin.php');            // retire la clé de la barre d'adresse et de l'historique
+}
+if (empty($_SESSION['admin_gate'])) {
+    http_response_code(404);
+    header('Content-Type: text/html; charset=utf-8');
+    echo "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n<html><head>\n<title>404 Not Found</title>\n</head><body>\n<h1>Not Found</h1>\n<p>The requested URL was not found on this server.</p>\n</body></html>\n";
+    exit;
+}
+header('X-Robots-Tag: noindex, nofollow');
+header('Referrer-Policy: no-referrer');
+
+$admin =read_json('admin.json', []);
 $hasPassword = !empty($admin['hash']);
 $errors = [];
 $old = ['version_name' => '', 'version_code' => '', 'notes' => '', 'url' => ''];

@@ -2,3 +2,6 @@
 data/admin.json
 # APK publiés depuis l'admin
 apks/*.apk
+
+# Clés secrètes (ADMIN_KEY, SETUP_KEY)
+config.local.php

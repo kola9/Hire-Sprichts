@@ -1,3 +1,8 @@
 Options -Indexes
 AddType application/vnd.android.package-archive .apk
 DirectoryIndex index.php
+
+# Fichiers internes : jamais servis directement
+<FilesMatch "^(config|config\.local|lib)\.php$">
+    Require all denied
+</FilesMatch>
