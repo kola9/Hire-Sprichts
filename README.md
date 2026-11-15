@@ -51,7 +51,7 @@ Projet Pages **séparé** : `sprichts-download`. Il ne touche à aucun autre pro
 1. `npx wrangler d1 create sprichts-download`, puis reporter le `database_id` dans `wrangler.toml`.
 2. `npm run db:migrate:remote`
 3. `npx wrangler pages project create sprichts-download --production-branch main`
-4. Cloudflare Zero Trust › Access › Applications › **Self-hosted** : domaine `sprichts-download.pages.dev`, chemins `admin` et `api/admin`, règle « Emails = ton e-mail », connexion **One-time PIN**.
+4. Cloudflare Zero Trust › Access › Applications › **Self-hosted** « Sprichts download admin » : chemins `admin` et `api/admin` sur `sprichts-download.pages.dev` **et** `*.sprichts-download.pages.dev` (adresses de test), règle « Emails = ton e-mail », connexion **One-time PIN**.
 5. Secrets (jamais dans Git) :
    ```bash
    npx wrangler pages secret put ACCESS_TEAM_DOMAIN --project-name sprichts-download   # ex. monequipe.cloudflareaccess.com
