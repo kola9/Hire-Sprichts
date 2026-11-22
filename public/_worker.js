@@ -257,9 +257,12 @@ export function codesRoute(method, path) {
     if (path === '/api/admin/codes') {
         return method === 'GET' ? { action: 'list' } : method === 'POST' ? { action: 'create' } : null;
     }
-    const m = path.match(/^\/api\/admin\/codes\/([0-9a-f]{24})(\/email)?$/);
+    // Sans fiche : un code tapé (il reste dans le corps, jamais dans l'adresse).
+    const typed = path.match(/^\/api\/admin\/codes\/(devices|release)$/);
+    if (typed) return method === 'POST' ? { action: typed[1] } : null;
+    const m = path.match(/^\/api\/admin\/codes\/([0-9a-f]{24})(?:\/(email|devices|release))?$/);
     if (!m) return null;
-    if (m[2]) return method === 'POST' ? { action: 'email', id: m[1] } : null;
+    if (m[2]) return method === 'POST' ? { action: m[2], id: m[1] } : null;
     return method === 'PUT' ? { action: 'update', id: m[1] } : null;
 }
 
@@ -288,7 +291,8 @@ async function handleCodes(request, env, path, token) {
             return json({ error: 'Requête illisible.' }, 400);
         }
         if (route.id) {
-            input = { ...input, id: route.id };
+            const { code, ...rest } = input; // l'adresse désigne la fiche, rien d'autre
+            input = { ...rest, id: route.id };
         }
     }
     const result = await env.CODES.admin(token ?? null, route.action, input);

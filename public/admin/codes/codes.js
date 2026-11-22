@@ -3,7 +3,8 @@
     'use strict';
 
     var API = '/api/admin/codes';
-    var STATES = { unused: 'Pas encore utilisé', active: 'Activé', error: 'Non enregistré' };
+    var STATES = { unused: 'Pas encore utilisé', active: 'Activé', released: 'Déjà utilisé, libéré', error: 'Non enregistré' };
+    var PLATFORMS = { android: 'Android', web: 'Web (iPhone ou navigateur)' };
 
     function $(id) { return document.getElementById(id); }
 
@@ -185,6 +186,7 @@
         updateButtons();
         if (!sheet.open) { sheet.showModal(); }
         sheet.scrollTop = 0;
+        showDevices({ list: 'sheet-devices', alert: 'sheet-alert' }, '/' + id, {}, function () { return !!current && current.id === id; });
 
         // Prêt d'avance : sur iPhone, « Partager » doit suivre le toucher immédiatement
         window.makeTicket(found.display, found.number).then(function (t) {
@@ -236,6 +238,88 @@
             })
             .catch(function (err) { notice('sheet-alert', err.message, 'error'); })
             .then(function () { $('save').disabled = false; });
+    });
+
+    // ---------- Appareils ----------
+
+    function day(iso) {
+        var d = new Date(iso);
+        return isNaN(d.getTime()) ? '?' : d.toLocaleDateString('fr-FR') + ' à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    /**
+     * @param where  où écrire la liste et les messages
+     * @param path   '/<fiche>' ou '' (code tapé)
+     * @param body   {} ou { code }
+     * @param still  faux si la liste n'est plus celle demandée (autre fiche ouverte…)
+     */
+    function showDevices(where, path, body, still) {
+        var list = $(where.list);
+        list.textContent = '';
+        list.appendChild(el('li', 'muted small', 'Chargement…'));
+        return api('POST', path + '/devices', body).then(function (data) {
+            if (!still()) { return; }
+            list.textContent = '';
+            if (!data.devices.length) {
+                list.appendChild(el('li', 'muted small', 'Aucun appareil sur ce code.'));
+                return;
+            }
+            data.devices.forEach(function (d) {
+                var name = PLATFORMS[d.platform] || 'Autre appareil';
+                var li = document.createElement('li');
+                var info = document.createElement('div');
+                info.appendChild(el('strong', '', name));
+                info.appendChild(el('span', 'muted small', 'Activé le ' + day(d.first_seen)));
+                info.appendChild(el('span', 'muted small', 'Vu le ' + day(d.last_seen) + (d.takes_place ? '' : ' (plus de 30 jours : place déjà libre)')));
+                var btn = el('button', 'btn release', 'Libérer un appareil');
+                btn.type = 'button';
+                btn.addEventListener('click', function () {
+                    if (!confirm('Libérer cet appareil (' + name + ', activé le ' + day(d.first_seen) + ') ?\n\nIl devra entrer de nouveau le code. Le code et la progression ne sont pas touchés.')) { return; }
+                    btn.disabled = true;
+                    var send = { device: d.device };
+                    if (body.code) { send.code = body.code; }
+                    api('POST', path + '/release', send).then(function () {
+                        if (still()) {
+                            notice(where.alert, 'Appareil libéré : une place est libre.');
+                            showDevices(where, path, body, still);
+                        }
+                        return load().then(function () {
+                            if (!current) { return; }
+                            var fresh = codes.find(function (c) { return c.id === current.id; });
+                            if (fresh) {
+                                current.state = fresh.state;
+                                current.devices = fresh.devices;
+                                showHead();
+                            }
+                        });
+                    }).catch(function (e) {
+                        btn.disabled = false;
+                        notice(where.alert, e.message, 'error');
+                    });
+                });
+                li.appendChild(info);
+                li.appendChild(btn);
+                list.appendChild(li);
+            });
+        }).catch(function (e) {
+            if (!still()) { return; }
+            list.textContent = '';
+            notice(where.alert, e.message, 'error');
+        });
+    }
+
+    var typed = 0;
+    $('release-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var code = $('release-code').value.replace(/\s/g, '');
+        var mine = ++typed;
+        notice('release-alert', '');
+        $('release-devices').textContent = '';
+        if (!/^(\d{6}|\d{10})$/.test(code)) {
+            notice('release-alert', 'Tape les 6 ou 10 chiffres du code.', 'error');
+            return;
+        }
+        showDevices({ list: 'release-devices', alert: 'release-alert' }, '', { code: code }, function () { return mine === typed; });
     });
 
     // ---------- Envoyer au client ----------

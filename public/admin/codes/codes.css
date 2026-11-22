@@ -58,3 +58,14 @@
 @media (max-width: 360px) {
     .actions { grid-template-columns: 1fr; }
 }
+
+.pill.released { color: var(--gold-soft); background: rgba(244,185,66,.14); }
+.release-any { margin-top: 16px; }
+.release-any h2 { margin: 0 0 4px; font-size: 1.2rem; }
+.release-any .many { flex-wrap: wrap; margin-top: 10px; }
+.release-any .many input { flex: 1 1 170px; width: auto; min-width: 0; min-height: 50px; font-size: 1rem; }
+.devices-title { margin: 20px 0 0; font-size: 1rem; }
+.device-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+.device-list li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.device-list li div { display: grid; gap: 2px; min-width: 0; }
+.device-list .release { min-height: 48px; }

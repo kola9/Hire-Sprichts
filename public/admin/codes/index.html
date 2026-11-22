@@ -43,6 +43,17 @@
     </form>
 </section>
 
+<section class="card release-any">
+    <h2>Libérer un appareil</h2>
+    <p class="muted small">Téléphone perdu, changé ou appli réinstallée. Tape le code du client (6 ou 10 chiffres) : le code reste valable, seule la place est libérée.</p>
+    <form id="release-form" class="many" novalidate>
+        <input id="release-code" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="Code du client" aria-label="Code du client" required>
+        <button class="btn" type="submit">Voir les appareils</button>
+    </form>
+    <div id="release-alert" role="status"></div>
+    <ul class="device-list" id="release-devices"></ul>
+</section>
+
 <div class="find">
     <input id="search" type="search" placeholder="Chercher un code ou un nom" aria-label="Chercher un code ou un nom" autocomplete="off">
     <button class="btn" id="refresh" type="button">Actualiser</button>
@@ -85,6 +96,9 @@
         </label>
         <button class="btn btn-primary big" id="save" type="submit">Enregistrer la fiche</button>
     </form>
+
+    <h3 class="devices-title">Appareils de ce code</h3>
+    <ul class="device-list" id="sheet-devices"></ul>
 
     <p class="muted small" id="send-hint">Enregistre la fiche pour envoyer le message.</p>
     <div class="actions">
