@@ -5,6 +5,8 @@
 //   /download.php        → compte le téléchargement puis redirige vers l'APK
 //   /api/versions        → liste publique des versions (page d'accueil)
 //   /api/admin/*         → administration, protégée par Cloudflare Access
+//   /api/admin/codes*    → relayé au service privé « sprichts-codes » (liaison CODES),
+//                          qui revérifie le jeton ; ce site n'a aucun accès à la base de l'appli
 // Tout le reste (pages, CSS, images) est servi en statique, sans Worker.
 //
 // Variables (Pages → Settings → Variables and Secrets) :
@@ -123,6 +125,9 @@ async function handleAdmin(request, env, url) {
     }
 
     const path = url.pathname;
+    if (path === '/api/admin/codes' || path.startsWith('/api/admin/codes/')) {
+        return await handleCodes(request, env, path, auth.token);
+    }
     if (path === '/api/admin/me' && request.method === 'GET') {
         return json({ email: auth.email, repo: env.GITHUB_RELEASES_REPO || null, releasesPrefix: releasesPrefix(env) });
     }
@@ -243,6 +248,53 @@ async function probeSize(link) {
     }
 }
 
+// ---------- Codes d'accès : relais vers le service privé ----------
+
+const MAX_CODES_BODY = 2_000_000; // le ticket joint à l'e-mail
+
+/** Les seules routes « codes » : méthode + chemin → action du service. */
+export function codesRoute(method, path) {
+    if (path === '/api/admin/codes') {
+        return method === 'GET' ? { action: 'list' } : method === 'POST' ? { action: 'create' } : null;
+    }
+    const m = path.match(/^\/api\/admin\/codes\/([0-9a-f]{24})(\/email)?$/);
+    if (!m) return null;
+    if (m[2]) return method === 'POST' ? { action: 'email', id: m[1] } : null;
+    return method === 'PUT' ? { action: 'update', id: m[1] } : null;
+}
+
+async function handleCodes(request, env, path, token) {
+    const route = codesRoute(request.method, path);
+    if (!route) {
+        return json({ error: 'Introuvable.' }, 404);
+    }
+    if (!env.CODES) {
+        return json({ error: 'Le service des codes n\'est pas disponible ici.' }, 503);
+    }
+    let input = {};
+    if (route.action !== 'list') {
+        if (!(request.headers.get('content-type') || '').toLowerCase().startsWith('application/json')) {
+            return json({ error: 'Format de requête invalide.' }, 415);
+        }
+        if (Number(request.headers.get('content-length')) > MAX_CODES_BODY) {
+            return json({ error: 'Requête trop lourde.' }, 413);
+        }
+        try {
+            input = await request.json();
+        } catch {
+            return json({ error: 'Requête illisible.' }, 400);
+        }
+        if (!input || typeof input !== 'object' || Array.isArray(input)) {
+            return json({ error: 'Requête illisible.' }, 400);
+        }
+        if (route.id) {
+            input = { ...input, id: route.id };
+        }
+    }
+    const result = await env.CODES.admin(token ?? null, route.action, input);
+    return json(result.body, result.status);
+}
+
 // ---------- Cloudflare Access : vérification du jeton ----------
 
 async function authorizeAdmin(request, env, url) {
@@ -276,7 +328,7 @@ async function authorizeAdmin(request, env, url) {
     if (!allowed.includes(email)) {
         return { ok: false, status: 403, error: 'Ce compte n\'est pas autorisé.' };
     }
-    return { ok: true, email };
+    return { ok: true, email, token };
 }
 
 function readCookie(request, name) {

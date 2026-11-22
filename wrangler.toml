@@ -13,6 +13,21 @@ database_name = "sprichts-download"
 database_id = "c04f0bed-6d47-46a6-9dc1-253941e9dbe2"
 migrations_dir = "migrations"
 
+# Service privé des codes d'accès (projet de l'appli, dossier codes-admin).
+# Production seulement : ce site n'a AUCUN accès direct à la base de l'appli.
+[[services]]
+binding = "CODES"
+service = "sprichts-codes"
+
+# Adresses de test (<id>.sprichts-download.pages.dev) : pas de liaison CODES.
+[env.preview.vars]
+GITHUB_RELEASES_REPO = "olabusyness-prog/Sprichts"
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "sprichts-download"
+database_id = "c04f0bed-6d47-46a6-9dc1-253941e9dbe2"
+
 # Secrets (jamais dans ce fichier) — à définir avec
 #   npx wrangler pages secret put <NOM> --project-name sprichts-download
 #   ACCESS_TEAM_DOMAIN, ACCESS_AUD, ADMIN_EMAILS

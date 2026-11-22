@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#1F1C4A">
+    <title>Codes · Admin Sprichts</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="/admin/codes/codes.css">
+    <script src="/admin/codes/ticket.js" defer></script>
+    <script src="/admin/codes/codes.js" defer></script>
+</head>
+<body class="codes-page">
+<div class="bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="grid"></span></div>
+<main class="wrap">
+
+<nav class="nav">
+    <a class="brand" href="/admin/"><img class="logo" src="/assets/logo.svg" alt="Sprichts" width="260" height="255">Sprichts <span class="badge purple">Admin</span></a>
+    <div class="nav-links">
+        <a class="btn btn-ghost" href="/admin/">← Versions</a>
+    </div>
+</nav>
+
+<div class="dash-head">
+    <div>
+        <div class="kicker">Codes d'accès</div>
+        <h1>Codes et clients</h1>
+        <p>Un code créé ici marche tout de suite dans l'appli.</p>
+    </div>
+</div>
+
+<div id="page-alert" role="status"></div>
+
+<section class="card make">
+    <button class="btn btn-primary big" id="make-one" type="button" disabled>＋ Générer un code</button>
+    <form id="make-many" class="many">
+        <label for="count">ou plusieurs :</label>
+        <input id="count" type="number" inputmode="numeric" min="2" max="20" value="10" required>
+        <button class="btn" type="submit" disabled>Générer</button>
+    </form>
+</section>
+
+<div class="find">
+    <input id="search" type="search" placeholder="Chercher un code ou un nom" aria-label="Chercher un code ou un nom" autocomplete="off">
+    <button class="btn" id="refresh" type="button">Actualiser</button>
+</div>
+
+<p class="muted small" id="count-line" aria-live="polite">Chargement…</p>
+<ul class="code-list" id="list"></ul>
+
+</main>
+
+<dialog id="sheet" aria-labelledby="sheet-code">
+    <div class="sheet-head">
+        <div>
+            <div class="kicker" id="sheet-number"></div>
+            <h2 id="sheet-code"></h2>
+            <span class="pill" id="sheet-state"></span>
+        </div>
+        <button class="btn" id="sheet-close" type="button" aria-label="Fermer la fiche">✕</button>
+    </div>
+
+    <div id="sheet-alert" role="status"></div>
+
+    <form class="form" id="card-form" novalidate>
+        <label>Nom du client (obligatoire)
+            <input name="name" maxlength="80" autocomplete="off" required>
+        </label>
+        <div class="row">
+            <label>Téléphone
+                <input name="phone" type="tel" maxlength="25" autocomplete="off">
+            </label>
+            <label>E-mail
+                <input name="email" type="email" maxlength="120" autocomplete="off">
+            </label>
+        </div>
+        <label>Date de vente
+            <input name="sold_on" type="date">
+        </label>
+        <label>Remarque
+            <textarea name="note" rows="2" maxlength="1000"></textarea>
+        </label>
+        <button class="btn btn-primary big" id="save" type="submit">Enregistrer la fiche</button>
+    </form>
+
+    <p class="muted small" id="send-hint">Enregistre la fiche pour envoyer le message.</p>
+    <div class="actions">
+        <button class="btn big" id="copy-code" type="button">Copier le code</button>
+        <button class="btn big" id="copy-message" type="button">Copier le message</button>
+        <button class="btn big" id="download" type="button">Télécharger le ticket</button>
+        <button class="btn btn-gold big" id="share" type="button">Partager</button>
+        <button class="btn big wide" id="send-email" type="button">Envoyer par e-mail</button>
+    </div>
+
+    <img class="ticket" id="ticket" alt="Ticket du client" width="1920" height="920" hidden>
+</dialog>
+
+</body>
+</html>
