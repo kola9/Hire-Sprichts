@@ -10,6 +10,10 @@
 
     var codes = [];
     var maxDevices = 2;
+    var makeApp = 'a2';   // appli des prochains codes générés
+    var b1Enabled = false;
+    var LEVEL = { a2: 'A2', b1: 'B1' };
+    function levelOf(c) { return LEVEL[c.app] || 'A2'; }
     var current = null;   // fiche ouverte
     var ticket = null;    // { id, png, jpeg, file, url }
     var busy = false;
@@ -64,7 +68,9 @@
         var raw = $('search').value.trim();
         var isCode = /^[\d\s]+$/.test(raw);
         var digits = raw.replace(/\s/g, '');
+        var only = $('filter-app').value;
         var shown = codes.filter(function (c) {
+            if (only && (c.app || 'a2') !== only) { return false; }
             if (!raw) { return true; }
             return isCode ? c.code.indexOf(digits) >= 0 : plain(c.name).indexOf(plain(raw)) >= 0;
         });
@@ -77,7 +83,9 @@
             row.type = 'button';
             row.className = 'code-row';
             row.dataset.id = c.id;
-            row.appendChild(el('span', 'num', c.display));
+            var num = el('span', 'num', c.display + ' ');
+            num.appendChild(el('span', 'app-tag app-' + (c.app || 'a2'), levelOf(c)));
+            row.appendChild(num);
             row.appendChild(el('span', 'pill ' + c.state, STATES[c.state]));
             row.appendChild(el('span', c.name ? 'who' : 'who none', c.name || 'Pas de client'));
             row.appendChild(el('span', 'devices', c.devices + '/' + maxDevices + ' appareils'));
@@ -87,7 +95,7 @@
         });
 
         $('count-line').textContent = !codes.length ? 'Aucun code pour l\'instant.'
-            : raw ? shown.length + ' résultat(s) sur ' + codes.length
+            : (raw || $('filter-app').value) ? shown.length + ' résultat(s) sur ' + codes.length
             : codes.length + ' code(s)';
     }
 
@@ -95,6 +103,8 @@
         return api('GET', '').then(function (data) {
             codes = data.codes;
             maxDevices = data.maxDevices;
+            b1Enabled = !!data.b1Enabled;
+            showMakeApp();
             renderList();
             setBusy(busy);
         });
@@ -110,7 +120,7 @@
         if (busy) { return; }
         setBusy(true);
         notice('page-alert', '');
-        api('POST', '', { count: count })
+        api('POST', '', { count: count, app: makeApp })
             .then(function (made) {
                 return load().then(function () {
                     $('search').value = '';
@@ -128,6 +138,27 @@
         generate(Number($('count').value));
     });
     $('search').addEventListener('input', renderList);
+    $('filter-app').addEventListener('change', renderList);
+
+    // Appli des codes générés : A2 par défaut ; B1 seulement quand le service l'autorise
+    function showMakeApp() {
+        if (makeApp === 'b1' && !b1Enabled) { makeApp = 'a2'; }
+        document.querySelectorAll('[data-make-app]').forEach(function (b) {
+            var app = b.getAttribute('data-make-app');
+            var on = app === makeApp;
+            b.classList.toggle('btn-gold', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            if (app === 'b1') { b.disabled = !b1Enabled; }
+        });
+        $('b1-hint').hidden = b1Enabled;
+        $('make-one').textContent = '＋ Générer un code ' + LEVEL[makeApp];
+    }
+    document.querySelectorAll('[data-make-app]').forEach(function (b) {
+        b.addEventListener('click', function () {
+            makeApp = b.getAttribute('data-make-app');
+            showMakeApp();
+        });
+    });
     $('refresh').addEventListener('click', function () {
         notice('page-alert', '');
         load().catch(function (e) { notice('page-alert', e.message, 'error'); });
@@ -164,7 +195,7 @@
     }
 
     function showHead() {
-        $('sheet-number').textContent = 'Ticket n° ' + String(current.number).padStart(4, '0');
+        $('sheet-number').textContent = 'Ticket n° ' + String(current.number).padStart(4, '0') + ' · Sprichts ' + levelOf(current);
         $('sheet-code').textContent = current.display;
         $('sheet-state').className = 'pill ' + current.state;
         $('sheet-state').textContent = STATES[current.state] + ' · ' + current.devices + '/' + maxDevices + ' appareils';
@@ -189,9 +220,9 @@
         showDevices({ list: 'sheet-devices', alert: 'sheet-alert' }, '/' + id, {}, function () { return !!current && current.id === id; });
 
         // Prêt d'avance : sur iPhone, « Partager » doit suivre le toucher immédiatement
-        window.makeTicket(found.display, found.number).then(function (t) {
+        window.makeTicket(found.display, found.number, levelOf(found)).then(function (t) {
             if (!current || current.id !== id) { return; }
-            var name = 'ticket-sprichts-' + String(found.number).padStart(4, '0') + '.png';
+            var name = 'ticket-sprichts-' + levelOf(found).toLowerCase() + '-' + String(found.number).padStart(4, '0') + '.png';
             ticket = { id: id, png: t.png, jpeg: t.jpeg, file: new File([t.png], name, { type: 'image/png' }), url: URL.createObjectURL(t.png) };
             $('ticket').src = ticket.url;
             $('ticket').hidden = false;

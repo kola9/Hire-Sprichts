@@ -3,6 +3,7 @@
 //
 // N'est appelé QUE pour les chemins listés dans _routes.json :
 //   /download.php        → compte le téléchargement puis redirige vers l'APK
+//                          (?id=latest : Sprichts A2, comme toujours ; ?app=b1&id=latest : Sprichts B1)
 //   /api/versions        → liste publique des versions (page d'accueil)
 //   /api/admin/*         → administration, protégée par Cloudflare Access
 //   /api/admin/codes*    → relayé au service privé « sprichts-codes » (liaison CODES),
@@ -19,6 +20,17 @@
 
 const VERSION_NAME_RE = /^[0-9A-Za-z._-]{1,32}$/;
 const MAX_NOTES = 5000;
+
+/** Les deux applis. Leurs releases GitHub se reconnaissent à leur tag. */
+export const APPS = {
+    a2: { name: 'Sprichts A2', tag: /^v\d+(\.\d+)*$/, example: 'v1.4.0' },
+    b1: { name: 'Sprichts B1', tag: /^b1-v\d+(\.\d+)*$/, example: 'b1-v1.0.0' },
+};
+/** Appli demandée ; sans précision : A2 (les liens déjà partagés). */
+export function appParam(value) {
+    if (value === null || value === undefined || value === '') return 'a2';
+    return Object.hasOwn(APPS, value) ? value : null;
+}
 
 export default {
     async fetch(request, env) {
@@ -83,8 +95,13 @@ async function handleDownload(request, env, url) {
         return new Response('Méthode non autorisée.', { status: 405, headers: { allow: 'GET, HEAD' } });
     }
     const id = url.searchParams.get('id') || '';
+    const app = appParam(url.searchParams.get('app'));
+    if (!app) {
+        return text('Appli inconnue.', 404);
+    }
+    // Une version précise : son identifiant suffit (les anciens liens n'ont pas d'appli).
     const row = id === 'latest'
-        ? await env.DB.prepare('SELECT id, url FROM versions ORDER BY version_code DESC LIMIT 1').first()
+        ? await env.DB.prepare('SELECT id, url FROM versions WHERE app = ? ORDER BY version_code DESC LIMIT 1').bind(app).first()
         : await env.DB.prepare('SELECT id, url FROM versions WHERE id = ?').bind(id).first();
 
     if (!row) {
@@ -104,7 +121,7 @@ async function handlePublicVersions(request, env) {
         return json({ error: 'Méthode non autorisée.' }, 405);
     }
     const { results } = await env.DB.prepare(
-        'SELECT id, version_name, version_code, notes, size, created_at, downloads FROM versions ORDER BY version_code DESC'
+        'SELECT id, app, version_name, version_code, notes, size, created_at, downloads FROM versions ORDER BY app, version_code DESC'
     ).all();
     return json({ versions: results });
 }
@@ -129,11 +146,12 @@ async function handleAdmin(request, env, url) {
         return await handleCodes(request, env, path, auth.token);
     }
     if (path === '/api/admin/me' && request.method === 'GET') {
-        return json({ email: auth.email, repo: env.GITHUB_RELEASES_REPO || null, releasesPrefix: releasesPrefix(env) });
+        const apps = Object.fromEntries(Object.entries(APPS).map(([k, a]) => [k, { name: a.name, tag: a.tag.source, example: a.example }]));
+        return json({ email: auth.email, repo: env.GITHUB_RELEASES_REPO || null, releasesPrefix: releasesPrefix(env), apps });
     }
     if (path === '/api/admin/versions') {
         if (request.method === 'GET') {
-            const { results } = await env.DB.prepare('SELECT * FROM versions ORDER BY version_code DESC').all();
+            const { results } = await env.DB.prepare('SELECT * FROM versions ORDER BY app, version_code DESC').all();
             return json({ versions: results });
         }
         if (request.method === 'POST') {
@@ -168,10 +186,14 @@ async function createVersion(request, env) {
     const codeRaw = String(body.version_code ?? '').trim();
     const notes = String(body.notes ?? '').trim();
     const link = String(body.url ?? '').trim();
+    const app = Object.hasOwn(APPS, body.app) ? body.app : null;
     const code = /^\d{1,9}$/.test(codeRaw) ? Number(codeRaw) : NaN;
     const prefix = releasesPrefix(env);
     const errors = [];
 
+    if (!app) {
+        errors.push('Choisis l\'appli : Sprichts A2 ou Sprichts B1.');
+    }
     if (!VERSION_NAME_RE.test(name)) {
         errors.push('Nom de version invalide (ex. 1.2.0).');
     }
@@ -185,18 +207,21 @@ async function createVersion(request, env) {
         errors.push('GITHUB_RELEASES_REPO n\'est pas configuré sur le serveur.');
     } else if (!isReleaseApkUrl(link, prefix)) {
         errors.push(`Le lien doit être un APK des Releases GitHub : ${prefix}<tag>/<fichier>.apk`);
+    } else if (app && !APPS[app].tag.test(releaseTag(link, prefix))) {
+        errors.push(`Cet APK n'est pas une release ${APPS[app].name} : son tag doit ressembler à « ${APPS[app].example} ».`);
     }
     if (errors.length) {
         return json({ error: errors.join(' ') }, 400);
     }
 
-    const dup = await env.DB.prepare('SELECT 1 FROM versions WHERE version_code = ?').bind(code).first();
+    const dup = await env.DB.prepare('SELECT 1 FROM versions WHERE app = ? AND version_code = ?').bind(app, code).first();
     if (dup) {
-        return json({ error: `Le build ${code} existe déjà.` }, 409);
+        return json({ error: `Le build ${code} existe déjà pour ${APPS[app].name}.` }, 409);
     }
 
     const entry = {
         id: newId(),
+        app,
         version_name: name,
         version_code: code,
         notes,
@@ -207,15 +232,15 @@ async function createVersion(request, env) {
     };
     try {
         await env.DB.prepare(
-            'INSERT INTO versions (id, version_name, version_code, notes, url, size, created_at, downloads) VALUES (?, ?, ?, ?, ?, ?, ?, 0)'
-        ).bind(entry.id, entry.version_name, entry.version_code, entry.notes, entry.url, entry.size, entry.created_at).run();
+            'INSERT INTO versions (id, app, version_name, version_code, notes, url, size, created_at, downloads) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)'
+        ).bind(entry.id, entry.app, entry.version_name, entry.version_code, entry.notes, entry.url, entry.size, entry.created_at).run();
     } catch (err) {
         if (String(err && err.message).includes('UNIQUE')) {
-            return json({ error: `Le build ${code} existe déjà.` }, 409);
+            return json({ error: `Le build ${code} existe déjà pour ${APPS[app].name}.` }, 409);
         }
         throw err;
     }
-    return json({ ok: true, message: `Version v${name} publiée.`, version: entry }, 201);
+    return json({ ok: true, message: `${APPS[app].name} v${name} publiée.`, version: entry }, 201);
 }
 
 export function isReleaseApkUrl(link, prefix) {
@@ -235,6 +260,15 @@ export function isReleaseApkUrl(link, prefix) {
     // <tag>/<fichier>.apk — exactement deux segments après le préfixe
     const rest = href.slice(prefix.length).split('/');
     return rest.length === 2 && rest[0] !== '' && /\.apk$/i.test(rest[1]);
+}
+
+/** Le tag de la release d'un lien d'APK (« v1.3.0 », « b1-v1.0.0 »…). */
+export function releaseTag(link, prefix) {
+    try {
+        return decodeURIComponent(new URL(link).pathname.slice(new URL(prefix).pathname.length).split('/')[0]);
+    } catch {
+        return '';
+    }
 }
 
 /** Taille de l'APK (best effort) : HEAD sur le lien GitHub, redirections suivies. */

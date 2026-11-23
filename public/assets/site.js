@@ -25,7 +25,9 @@
         while (bytes >= 1000 && i < units.length - 1) { bytes /= 1000; i++; }
         return (i === 0 ? String(Math.round(bytes)) : bytes.toFixed(1).replace('.', ',')) + ' ' + units[i];
     }
-    function dl(id) { return '/download.php?id=' + encodeURIComponent(id); }
+    // Sans « app » : Sprichts A2, comme tous les liens déjà partagés
+    function dl(id, app) { return '/download.php?' + (app && app !== 'a2' ? 'app=' + app + '&' : '') + 'id=' + encodeURIComponent(id); }
+    function isA2(v) { return !v.app || v.app === 'a2'; }
 
     document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -40,14 +42,16 @@
     function applyDevice() {
         document.documentElement.setAttribute('data-device', device);
         if (device === 'desktop') { return; }
-        var mine = document.getElementById(device === 'ios' ? 'iphone' : 'android');
-        if (mine) {
+        (device === 'ios' ? ['iphone', 'b1-iphone'] : ['android', 'b1-android']).forEach(function (id) {
+            var mine = document.getElementById(id);
+            if (!mine || mine.hidden || mine.classList.contains('b1-soon')) { return; }
             mine.classList.add('is-you');
             var badge = mine.querySelector('.badge.you');
             if (badge) { badge.hidden = false; }
-        }
+        });
         if (device === 'ios') {
             document.getElementById('platforms').classList.add('ios-first');
+            document.getElementById('b1-platforms').classList.add('ios-first');
             document.getElementById('nav-download').hidden = true;
             document.getElementById('nav-ios').hidden = false;
             document.getElementById('eyebrow-text').textContent = 'Disponible sur iPhone, depuis Safari';
@@ -73,7 +77,13 @@
 
     fetch('/api/versions', { headers: { accept: 'application/json' } })
         .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (data) { if (data && data.versions && data.versions.length) { render(data.versions); } })
+        .then(function (data) {
+            if (!data || !data.versions) { return; }
+            var a2 = data.versions.filter(isA2);
+            var b1 = data.versions.filter(function (v) { return v.app === 'b1'; });
+            if (a2.length) { render(a2); }
+            if (b1.length) { renderB1(b1); }
+        })
         .catch(function () { /* page statique conservée */ });
 
     function render(versions) {
@@ -129,6 +139,56 @@
                 correctLevel: QRCode.CorrectLevel.M
             });
         }
+        applyDevice();
+    }
+
+    function qr(id, text) {
+        var el = document.getElementById(id);
+        if (el && typeof QRCode !== 'undefined') {
+            new QRCode(el, { text: text, width: 156, height: 156, colorDark: '#1F1C4A', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+        }
+    }
+
+    // Sprichts B1 : dès qu'une version est publiée, comme pour l'A2
+    function renderB1(versions) {
+        var latest = versions[0];
+        var older = versions.slice(1);
+        var total = versions.reduce(function (s, v) { return s + (Number(v.downloads) || 0); }, 0);
+        var name = esc(latest.version_name);
+
+        document.getElementById('level-b1-badge').textContent = 'Disponible';
+        document.getElementById('level-b1-btn').textContent = 'Télécharger Sprichts B1';
+        document.getElementById('level-b1-btn').className = 'btn btn-primary';
+
+        document.getElementById('b1-slot').innerHTML =
+            '<section class="card release platform" id="b1-android"><div>' +
+            '<div class="platform-badges"><span class="badge badge-b1">Sprichts B1</span><span class="badge purple">Sur Android</span><span class="badge">Dernière version</span>' +
+            '<span class="badge you" hidden>Ton téléphone</span></div>' +
+            '<div class="version">v' + name + ' <small>build ' + Number(latest.version_code) + '</small></div>' +
+            '<p class="meta">Publiée le ' + fmtDate(latest.created_at) + (latest.size ? ' · ' + fmtSize(latest.size) : '') +
+            (total ? ' · ' + total + ' téléchargement' + (total > 1 ? 's' : '') : '') + '</p>' +
+            '<a class="btn btn-primary" href="' + dl(latest.id, 'b1') + '">' + ICON_DOWNLOAD + ' Télécharger Sprichts B1 v' + name + '</a>' +
+            (latest.notes ? '<div class="notes"><h3>Nouveautés</h3><p>' + nl2br(latest.notes) + '</p></div>' : '') +
+            '<p class="small muted">Il faut un code d\'accès Sprichts B1 : un code A2 ne marche pas dans cette appli.</p>' +
+            '</div><div class="qr"><div class="qr-frame"><div id="qr-b1"></div></div>' +
+            '<p>Sur ordinateur ? Scanne ce code avec ton téléphone Android.</p></div></section>';
+
+        document.getElementById('b1-iphone').hidden = false;
+
+        if (older.length) {
+            document.getElementById('b1-older-slot').innerHTML =
+                '<div class="section-title"><div><div class="kicker">Historique</div><h2>Sprichts B1 : versions précédentes</h2></div></div>' +
+                '<section class="card"><ul class="versions">' +
+                older.map(function (v) {
+                    return '<li><div><strong>v' + esc(v.version_name) + '</strong>' +
+                        '<span class="sub">build ' + Number(v.version_code) + ' · ' + fmtDate(v.created_at) + (v.size ? ' · ' + fmtSize(v.size) : '') + '</span>' +
+                        (v.notes ? '<p>' + nl2br(v.notes) + '</p>' : '') + '</div>' +
+                        '<a class="btn" href="' + dl(v.id, 'b1') + '">' + ICON_DOWNLOAD + ' Télécharger</a></li>';
+                }).join('') + '</ul></section>';
+        }
+
+        qr('qr-b1', new URL('/download.php?app=b1&id=latest', window.location.href).href);
+        qr('qr-b1-iphone', 'https://sprichts-b1.pages.dev/');
         applyDevice();
     }
 })();

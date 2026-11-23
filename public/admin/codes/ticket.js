@@ -62,7 +62,7 @@
         spaced(c, s, middle - width(c, s, gap) / 2, y, gap);
     }
 
-    function paint(c, code, number, icon, logo) {
+    function paint(c, code, number, icon, logo, level) {
         c.fillStyle = '#EFEDF7';
         c.fillRect(0, 0, 1280, 614);
 
@@ -138,14 +138,14 @@
         g.addColorStop(0, '#FFD076');
         g.addColorStop(1, '#FF8A3D');
         c.fillStyle = g;
-        c.fillText('A2', x, 265);
+        c.fillText(level, x, 265);
 
         font(c, 300, 20);
         c.fillStyle = 'rgba(255,255,255,.8)';
         c.fillText("Voucher d'activation — accès complet à l'application", 94, 312);
 
         font(c, 500, 16);
-        [['Toutes les leçons A2', 94], ['Exercices & quiz', 303], ['Audio natif', 478]].forEach(function (f) {
+        [['Toutes les leçons ' + level, 94], ['Exercices & quiz', 303], ['Audio natif', 478]].forEach(function (f) {
             c.fillStyle = '#F7A928';
             c.fillText('✦', f[1], 372);
             c.fillStyle = '#FFFFFF';
@@ -154,7 +154,7 @@
 
         font(c, 400, 14.5);
         c.fillStyle = 'rgba(255,255,255,.55)';
-        spaced(c, 'Valable pour un seul compte · Niveau A2 (CECRL) · Activation à vie', 94, 500, 0.8);
+        spaced(c, 'Valable pour un seul compte · Niveau ' + level + ' (CECRL) · Activation à vie', 94, 500, 0.8);
 
         // Talon orange
         g = c.createLinearGradient(900, 40, 1120, 560);
@@ -236,14 +236,16 @@
     }
 
     /** → { png, jpeg } : PNG à télécharger et partager, JPEG plus léger pour l'e-mail. */
-    window.makeTicket = function (display, number) {
+    /** level : « A2 » (par défaut) ou « B1 ». */
+    window.makeTicket = function (display, number, level) {
+        level = level === 'B1' ? 'B1' : 'A2';
         return load().then(function (a) {
             var canvas = document.createElement('canvas');
             canvas.width = 1920;
             canvas.height = 920;
             var c = canvas.getContext('2d');
             c.scale(SCALE, SCALE);
-            paint(c, display, number, a[0], a[1]);
+            paint(c, display, number, a[0], a[1], level);
             return Promise.all([blob(canvas, 'image/png'), blob(canvas, 'image/jpeg', 0.88)]);
         }).then(function (b) {
             return { png: b[0], jpeg: b[1] };

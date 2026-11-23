@@ -24,6 +24,7 @@
         <a class="nav-link" href="#examen">Examen A2</a>
         <a class="nav-link" href="#installer">Installer</a>
         <a class="nav-link" href="#iphone">iPhone</a>
+        <a class="nav-link" href="#b1">Sprichts B1</a>
         <a class="nav-link" href="#faq">Aide</a>
         <a class="btn btn-gold" id="nav-ios" href="https://sprichts.pages.dev/" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg><span>Ouvrir sur iPhone</span></a>
         <a class="btn btn-gold" id="nav-download" href="/download.php?id=latest" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span>Télécharger</span></a>
@@ -62,10 +63,33 @@
     <div><strong>100 %</strong><span>des explications en français</span></div>
 </section>
 
-<!-- ============ Télécharger : Android + iPhone ============ -->
+<!-- ============ Deux applis : A2 et B1 ============ -->
+<div class="section-title" id="niveaux">
+    <div>
+        <div class="kicker">Deux applis</div>
+        <h2>Choisis ton niveau</h2>
+    </div>
+</div>
+<div class="levels">
+    <a class="card level level-a2" href="#telecharger">
+        <span class="badge">Disponible</span>
+        <span class="level-name">Sprichts <span class="grad">A2</span></span>
+        <span class="muted">Pour réussir le <strong>Goethe-Zertifikat A2</strong> : parler avec Lukas et Frau Schulz, examen blanc complet.</span>
+        <span class="btn btn-primary">Télécharger Sprichts A2</span>
+    </a>
+    <a class="card level level-b1" href="#b1">
+        <span class="badge badge-b1" id="level-b1-badge">Bientôt disponible</span>
+        <span class="level-name">Sprichts <span class="grad-b1">B1</span></span>
+        <span class="muted">Pour préparer le <strong>Goethe-Zertifikat B1</strong> : le niveau suivant, avec la même méthode.</span>
+        <span class="btn" id="level-b1-btn">Découvrir Sprichts B1</span>
+    </a>
+</div>
+<p class="small muted levels-note">Deux applis séparées, chacune avec ses propres codes : un code A2 ne débloque pas Sprichts B1, et inversement.</p>
+
+<!-- ============ Télécharger Sprichts A2 : Android + iPhone ============ -->
 <div class="section-title" id="telecharger">
     <div>
-        <div class="kicker">Télécharger</div>
+        <div class="kicker">Télécharger Sprichts A2</div>
         <h2>Android ou iPhone : choisis ton téléphone</h2>
     </div>
 </div>
@@ -101,6 +125,51 @@
         </div>
     </section>
 </div>
+
+<!-- ============ Sprichts B1 ============ -->
+<div class="section-title" id="b1">
+    <div>
+        <div class="kicker">Sprichts B1</div>
+        <h2>Le niveau suivant : Goethe-Zertifikat B1</h2>
+    </div>
+</div>
+<div class="platforms" id="b1-platforms">
+    <div id="b1-slot">
+        <section class="card platform b1-soon" id="b1-android">
+            <div class="platform-badges"><span class="badge badge-b1">Sprichts B1</span><span class="badge">Bientôt disponible</span></div>
+            <div class="version">Sprichts B1 <small>en préparation</small></div>
+            <p class="meta">Une appli séparée pour préparer le <strong>Goethe-Zertifikat B1</strong>, avec la même méthode que Sprichts A2 : parler à voix haute, être corrigé en français, progresser chaque jour.</p>
+            <ul class="checks">
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Lukas et Frau Schulz <strong>au niveau B1</strong></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Une <strong>simulation d'examen B1</strong></li>
+                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Du <strong>nouveau vocabulaire</strong> B1</li>
+            </ul>
+            <p class="small muted">Pas encore de téléchargement : il apparaîtra ici dès la sortie de la première version. Sprichts B1 aura ses propres codes d'accès.</p>
+        </section>
+    </div>
+
+    <section class="card release platform" id="b1-iphone" hidden>
+        <div>
+            <div class="platform-badges"><span class="badge badge-b1">Sprichts B1</span><span class="badge purple">Sur iPhone</span><span class="badge you" hidden>Ton téléphone</span></div>
+            <div class="version">Sprichts B1 sur iPhone <small>sans App Store</small></div>
+            <p class="meta">Sprichts B1 s'installe depuis <strong>Safari</strong>, comme Sprichts A2, et s'ouvre ensuite depuis son icône.</p>
+            <div class="cta">
+                <a class="btn btn-primary" href="https://sprichts-b1.pages.dev/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg> Ouvrir Sprichts B1 dans Safari</a>
+            </div>
+            <ol class="ios-steps">
+                <li><span class="n">1</span><span>Ouvre le lien dans <strong>Safari</strong> (pas dans Chrome ni WhatsApp).</span></li>
+                <li><span class="n">2</span><span>Touche <strong>Partager</strong> ⬆️ puis <strong>Sur l'écran d'accueil</strong> › Ajouter.</span></li>
+                <li><span class="n">3</span><span>Ouvre Sprichts B1 depuis son icône et entre ton <strong>code B1</strong>.</span></li>
+                <li><span class="n">4</span><span>Touche <strong>Autoriser</strong> quand Sprichts B1 demande le micro.</span></li>
+            </ol>
+        </div>
+        <div class="qr">
+            <div class="qr-frame"><div id="qr-b1-iphone"></div></div>
+            <p>Scanne ce code avec l'appareil photo de l'iPhone.</p>
+        </div>
+    </section>
+</div>
+<div id="b1-older-slot"></div>
 
 <!-- ============ Fonctionnalités ============ -->
 <div class="section-title" id="fonctionnalites">
@@ -282,7 +351,7 @@
     <div class="needs-note">
         <h3>Et sans connexion ?</h3>
         <p class="muted">L'application fonctionne aussi hors ligne : voix naturelles (Android), exercices, photos et professeure en mode simplifié. Il faut Internet pour entrer le code, pour parler avec l'IA et pour retrouver ta progression sur un autre appareil. La reconnaissance vocale peut aussi en avoir besoin.</p>
-        <p class="small muted">Chaque code (6 ou 10 chiffres) fonctionne sur 2 appareils au maximum. Si tu réinstalles l'application, garde le même code : il n'en faut pas de nouveau. Pour une mise à jour, installe la nouvelle version par-dessus, sans désinstaller l'ancienne : ta progression est conservée.</p>
+        <p class="small muted">Chaque code (6 ou 10 chiffres) fonctionne sur 2 appareils au maximum, dans son appli seulement : un code Sprichts A2 ne débloque pas Sprichts B1, et inversement. Si tu réinstalles l'application, garde le même code : il n'en faut pas de nouveau. Pour une mise à jour, installe la nouvelle version par-dessus, sans désinstaller l'ancienne : ta progression est conservée.</p>
         <p class="small muted">Tu as activé Sprichts <strong>avant le 15 novembre</strong> ? Entre une fois ton code dans <strong>Profil › Réglages › Mon accès</strong> : ta progression sera aussi sauvegardée en ligne.</p>
         <p class="small muted">À partir de la version 1.3.0, le contenu et la plupart des nouveautés arrivent directement dans l'appli : <strong>Profil › Réglages › Mises à jour</strong>.</p>
     </div>
@@ -323,7 +392,7 @@
         <div class="kicker">Aide</div>
         <h2>Questions fréquentes</h2>
     </div>
-    <a class="btn" href="/assets/Guide_utilisation_Sprichts.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg> Guide complet (PDF)</a>
+    <a class="btn" href="/assets/Guide_utilisation_Sprichts.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg> Guide Sprichts A2 (PDF)</a>
 </div>
 <section class="card faq">
     <details><summary>« Il faut une connexion Internet » au moment du code</summary><p>Active les données mobiles ou le Wi-Fi (n'importe quel réseau), puis réessaie.</p></details>
@@ -335,6 +404,7 @@
     <details><summary>Le professeur met du temps ou répond en mode simplifié</summary><p>Quelques secondes suffisent en général, jusqu'à 20 s si la connexion est lente. Sans Internet, ou après la limite de messages du jour, Frau Schulz répond en mode simplifié.</p></details>
     <details><summary>Lukas me propose une autre question</summary><p>Ta question était hors du thème de la carte ou contenait un mot inconnu. Remets les mots dans l'ordre et prononce la question proposée.</p></details>
     <details><summary>Comment mettre à jour l'application ?</summary><p>Télécharge la nouvelle version ici et installe-la par-dessus l'ancienne, sans la désinstaller : ta progression est conservée. À partir de la 1.3.0, le contenu et la plupart des nouveautés arrivent directement dans l'appli (Profil › Réglages › Mises à jour). Si tu dois la réinstaller, pas besoin de nouveau code : tape le même, avec une connexion Internet.</p></details>
+    <details><summary>Mon code Sprichts A2 marche-t-il dans Sprichts B1 ?</summary><p>Non. Sprichts A2 et Sprichts B1 sont deux applis séparées, chacune avec ses propres codes d'accès : un code A2 ne débloque que Sprichts A2, un code B1 que Sprichts B1. Tes anciens codes (6 ou 10 chiffres) sont des codes A2.</p></details>
     <details><summary>J'ai activé Sprichts avant le 15 novembre</summary><p>Entre une fois ton code d'accès dans Profil › Réglages › Mon accès, avec Internet : ta progression sera aussi sauvegardée en ligne et tu la retrouveras sur un autre appareil.</p></details>
 </section>
 

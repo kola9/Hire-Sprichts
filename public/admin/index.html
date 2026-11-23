@@ -36,6 +36,11 @@
 <div id="alerts"></div>
 
 <div id="dashboard" hidden>
+    <div class="app-switch" role="group" aria-label="Appli">
+        <button class="btn btn-gold" type="button" data-app="a2" aria-pressed="true">Sprichts A2</button>
+        <button class="btn" type="button" data-app="b1" aria-pressed="false">Sprichts B1</button>
+    </div>
+
     <div class="stats">
         <div class="card stat"><div class="label">Versions</div><div class="value" id="stat-count">0</div></div>
         <div class="card stat"><div class="label">Téléchargements</div><div class="value" id="stat-downloads">0</div></div>
@@ -44,7 +49,7 @@
 
     <div class="dash-grid">
         <section class="card">
-            <h2>Publier une version</h2>
+            <h2>Publier une version <span class="app-name"></span></h2>
             <p class="desc">L'APK est hébergé sur GitHub Releases : le site enregistre seulement le lien.</p>
             <form class="form" id="publish">
                 <label>Choisir dans les Releases GitHub <span class="hint" id="repo-hint"></span>
@@ -70,7 +75,7 @@
 
         <div class="stack">
             <section class="card">
-                <h2>Versions publiées</h2>
+                <h2>Versions publiées <span class="app-name"></span></h2>
                 <p class="desc" id="empty">Aucune version pour l'instant.</p>
                 <div class="table-scroll" id="table-wrap" hidden>
                     <table>
@@ -78,15 +83,15 @@
                         <tbody id="rows"></tbody>
                     </table>
                 </div>
-                <p class="muted small">Lien permanent : <code>/download.php?id=latest</code></p>
+                <p class="muted small">Lien permanent : <code id="permalink">/download.php?id=latest</code></p>
             </section>
 
             <section class="card">
                 <h2>Comment publier ?</h2>
                 <ol class="desc help">
                     <li>Sur GitHub, ouvre le dépôt des APK › <strong>Releases</strong> › <strong>Draft a new release</strong>.</li>
-                    <li>Crée un tag (ex. <code>v1.2.0</code>), glisse le fichier <code>.apk</code>, puis <strong>Publish release</strong>.</li>
-                    <li>Reviens ici : choisis l'APK dans la liste, vérifie le build, puis <strong>Publier</strong>.</li>
+                    <li>Crée un tag : <code>v1.4.0</code> pour Sprichts A2, <code>b1-v1.0.0</code> pour Sprichts B1. Glisse le fichier <code>.apk</code>, puis <strong>Publish release</strong>.</li>
+                    <li>Reviens ici, choisis l'appli en haut, puis l'APK dans la liste. Vérifie le build et touche <strong>Publier</strong>.</li>
                 </ol>
                 <p class="muted small">Supprimer une version ici ne supprime pas le fichier sur GitHub.</p>
             </section>
@@ -99,7 +104,7 @@
 <script>
 (function () {
     'use strict';
-    var state = { versions: [], prefix: null, repo: null };
+    var state = { versions: [], prefix: null, repo: null, app: 'a2', apps: null, assets: [] };
     var form = document.getElementById('publish');
     var picker = document.getElementById('picker');
 
@@ -143,8 +148,12 @@
         });
     }
 
+    function appName() { return state.apps ? state.apps[state.app].name : (state.app === 'b1' ? 'Sprichts B1' : 'Sprichts A2'); }
+
     function render() {
-        var v = state.versions;
+        var v = state.versions.filter(function (x) { return (x.app || 'a2') === state.app; });
+        document.querySelectorAll('.app-name').forEach(function (e) { e.textContent = '· ' + appName(); });
+        document.getElementById('permalink').textContent = state.app === 'a2' ? '/download.php?id=latest' : '/download.php?app=' + state.app + '&id=latest';
         var total = v.reduce(function (s, x) { return s + (Number(x.downloads) || 0); }, 0);
         document.getElementById('stat-count').textContent = v.length;
         document.getElementById('stat-downloads').textContent = total;
@@ -167,10 +176,24 @@
         });
     }
 
+    // Seulement les APK de l'appli choisie (tag « v… » pour l'A2, « b1-v… » pour le B1)
+    function renderPicker() {
+        if (!state.loaded) { return; }
+        var re = state.apps ? new RegExp(state.apps[state.app].tag) : null;
+        var opts = state.assets.filter(function (o) { return re && re.test(o.tag); });
+        state.shown = opts;
+        picker.innerHTML = opts.length
+            ? '<option value="">— Choisis un APK ' + esc(appName()) + ' (' + opts.length + ') —</option>' + opts.map(function (o, i) {
+                return '<option value="' + i + '">' + esc(o.tag) + ' · ' + esc(o.name) + '</option>';
+            }).join('')
+            : '<option value="">Aucun APK ' + esc(appName()) + ' dans les Releases pour l\'instant</option>';
+        picker.disabled = !opts.length;
+    }
+
     // Releases GitHub (API publique) → liste des APK
     function loadReleases() {
         if (!state.repo) { picker.innerHTML = '<option value="">Dépôt non configuré</option>'; return; }
-        fetch('https://api.github.com/repos/' + state.repo + '/releases?per_page=20', { headers: { accept: 'application/vnd.github+json' } })
+        fetch('https://api.github.com/repos/' + state.repo + '/releases?per_page=50', { headers: { accept: 'application/vnd.github+json' } })
             .then(function (r) { if (!r.ok) { throw new Error(); } return r.json(); })
             .then(function (releases) {
                 var opts = [];
@@ -182,12 +205,8 @@
                     });
                 });
                 state.assets = opts;
-                picker.innerHTML = opts.length
-                    ? '<option value="">— Choisis un APK (' + opts.length + ') —</option>' + opts.map(function (o, i) {
-                        return '<option value="' + i + '">' + esc(o.tag) + ' · ' + esc(o.name) + '</option>';
-                    }).join('')
-                    : '<option value="">Aucun APK publié dans les Releases pour l\'instant</option>';
-                picker.disabled = !opts.length;
+                state.loaded = true;
+                renderPicker();
             })
             .catch(function () {
                 picker.innerHTML = '<option value="">Releases indisponibles : colle le lien à la main</option>';
@@ -195,10 +214,10 @@
     }
 
     picker.addEventListener('change', function () {
-        var o = state.assets && state.assets[picker.value];
+        var o = state.shown && state.shown[picker.value];
         if (!o) { return; }
         form.url.value = o.url;
-        if (!form.version_name.value) { form.version_name.value = o.tag.replace(/^v/i, ''); }
+        if (!form.version_name.value) { form.version_name.value = o.tag.replace(/^(b1-)?v/i, ''); }
         if (!form.notes.value && o.notes) { form.notes.value = o.notes.slice(0, 5000); }
         if (!form.version_code.value) { form.version_code.focus(); }
     });
@@ -207,7 +226,9 @@
         e.preventDefault();
         var btn = form.querySelector('button[type=submit]');
         btn.disabled = true;
+        if (!confirm('Publier cette version pour ' + appName() + ' ?')) { btn.disabled = false; return; }
         api('POST', '/api/admin/versions', {
+            app: state.app,
             version_name: form.version_name.value,
             version_code: form.version_code.value,
             url: form.url.value,
@@ -222,6 +243,21 @@
         }).then(function () { btn.disabled = false; });
     });
 
+    document.querySelectorAll('.app-switch [data-app]').forEach(function (b) {
+        b.addEventListener('click', function () {
+            state.app = b.getAttribute('data-app');
+            document.querySelectorAll('.app-switch [data-app]').forEach(function (x) {
+                var on = x === b;
+                x.classList.toggle('btn-gold', on);
+                x.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+            form.reset();
+            alertBox('');
+            render();
+            renderPicker();
+        });
+    });
+
     document.getElementById('rows').addEventListener('click', function (e) {
         var b = e.target.closest('[data-del]');
         if (!b || !confirm('Supprimer la version v' + b.getAttribute('data-name') + ' ?')) { return; }
@@ -234,6 +270,7 @@
     api('GET', '/api/admin/me').then(function (me) {
         state.repo = me.repo;
         state.prefix = me.releasesPrefix;
+        state.apps = me.apps || null;
         document.getElementById('hello').textContent = 'Salut ✨';
         document.getElementById('hello').title = me.email || '';
         document.getElementById('repo-hint').textContent = me.repo ? 'github.com/' + me.repo : '';

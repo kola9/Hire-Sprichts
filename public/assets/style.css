@@ -498,3 +498,28 @@ tbody tr:hover { background: rgba(255,255,255,.03); }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Admin : choix de l'appli (A2 / B1) */
+.app-switch { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 18px; }
+.app-switch .btn { min-height: 48px; flex: 1 1 140px; max-width: 220px; }
+.app-name { color: var(--muted); font-weight: 600; font-size: .8em; }
+
+/* Deux applis : Sprichts A2 et Sprichts B1 */
+.levels { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.level { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; text-decoration: none; color: var(--text);
+         transition: transform .25s ease, border-color .25s ease; }
+.level:hover { transform: translateY(-4px); border-color: rgba(139,102,255,.45); }
+.level-b1:hover { border-color: rgba(14,165,233,.5); }
+.level .muted strong { color: var(--text); }
+.level .btn { margin-top: auto; }
+.level-name { font-size: clamp(1.8rem, 3.4vw, 2.4rem); font-weight: 800; letter-spacing: -.04em; line-height: 1.1; }
+.grad-b1 { background: linear-gradient(100deg, #7DD3FC 0%, #38BDF8 45%, #818CF8 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.badge-b1 { background: rgba(14,165,233,.14); color: #7DD3FC; border-color: rgba(14,165,233,.38); }
+.levels-note { margin: 14px 0 0; }
+.b1-soon { border-color: rgba(14,165,233,.3); }
+.b1-soon .checks { margin: 18px 0 14px; }
+#b1-platforms.ios-first #b1-iphone { order: -1; }
+@media (max-width: 680px) {
+    .levels { grid-template-columns: 1fr; }
+    .level .btn { width: 100%; }
+}

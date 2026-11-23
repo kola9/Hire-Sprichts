@@ -69,3 +69,20 @@
 .device-list li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
 .device-list li div { display: grid; gap: 2px; min-width: 0; }
 .device-list .release { min-height: 48px; }
+
+/* Appli de chaque code : A2 / B1 */
+.make .app-pick { flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.app-pick .btn { min-height: 46px; }
+.app-pick .btn[disabled] { opacity: .45; }
+#b1-hint { flex: 1 1 220px; }
+.app-tag { display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 8px; font-size: .72rem; font-weight: 800;
+           letter-spacing: .04em; vertical-align: middle; }
+.app-tag.app-a2 { color: #C9B8FF; background: rgba(139,102,255,.18); }
+.app-tag.app-b1 { color: #7DD3FC; background: rgba(14,165,233,.18); }
+.find select { width: auto; min-width: 110px; }
+
+@media (max-width: 600px) {
+    .find { flex-wrap: wrap; }
+    .find input { flex: 1 1 100%; }
+    .find select, .find .btn { flex: 1 1 0; min-height: 48px; }
+}

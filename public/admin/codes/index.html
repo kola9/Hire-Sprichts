@@ -35,6 +35,12 @@
 <div id="page-alert" role="status"></div>
 
 <section class="card make">
+    <div class="app-pick" role="group" aria-label="Appli du code">
+        <span class="muted small">Appli :</span>
+        <button class="btn btn-gold" type="button" data-make-app="a2" aria-pressed="true">Sprichts A2</button>
+        <button class="btn" type="button" data-make-app="b1" aria-pressed="false" disabled>Sprichts B1</button>
+        <span class="muted small" id="b1-hint">Codes B1 : pas encore, le serveur de l'appli doit d'abord les reconnaître.</span>
+    </div>
     <button class="btn btn-primary big" id="make-one" type="button" disabled>＋ Générer un code</button>
     <form id="make-many" class="many">
         <label for="count">ou plusieurs :</label>
@@ -56,6 +62,11 @@
 
 <div class="find">
     <input id="search" type="search" placeholder="Chercher un code ou un nom" aria-label="Chercher un code ou un nom" autocomplete="off">
+    <select id="filter-app" aria-label="Filtrer par appli">
+        <option value="">A2 et B1</option>
+        <option value="a2">A2</option>
+        <option value="b1">B1</option>
+    </select>
     <button class="btn" id="refresh" type="button">Actualiser</button>
 </div>
 
