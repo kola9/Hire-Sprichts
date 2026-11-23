@@ -117,7 +117,8 @@
         bytes = Number(bytes);
         if (!bytes) { return '—'; }
         var units = ['o', 'Ko', 'Mo', 'Go'], i = 0;
-        while (bytes >= 1024 && i < units.length - 1) { bytes /= 1024; i++; }
+        // Comme Android : 1 Mo = 1 000 000 octets
+        while (bytes >= 1000 && i < units.length - 1) { bytes /= 1000; i++; }
         return (i === 0 ? String(Math.round(bytes)) : bytes.toFixed(1).replace('.', ',')) + ' ' + units[i];
     }
     function alertBox(msg, type) {
