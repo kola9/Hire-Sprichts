@@ -63,114 +63,109 @@
     <div><strong>100 %</strong><span>des explications en français</span></div>
 </section>
 
-<!-- ============ Deux applis : A2 et B1 ============ -->
+<!-- ============ Télécharger : un onglet par appli (A2 / B1) ============ -->
+<section class="dl" id="telecharger">
 <div class="section-title" id="niveaux">
     <div>
-        <div class="kicker">Deux applis</div>
+        <div class="kicker">Télécharger</div>
         <h2>Choisis ton niveau</h2>
     </div>
 </div>
-<div class="levels">
-    <a class="card level level-a2" href="#telecharger">
-        <span class="badge">Disponible</span>
-        <span class="level-name">Sprichts <span class="grad">A2</span></span>
-        <span class="muted">Pour réussir le <strong>Goethe-Zertifikat A2</strong> : parler avec Lukas et Frau Schulz, examen blanc complet.</span>
-        <span class="btn btn-primary">Télécharger Sprichts A2</span>
-    </a>
-    <a class="card level level-b1" href="#b1">
-        <span class="badge badge-b1" id="level-b1-badge">Bientôt disponible</span>
-        <span class="level-name">Sprichts <span class="grad-b1">B1</span></span>
-        <span class="muted">Pour préparer le <strong>Goethe-Zertifikat B1</strong> : le niveau suivant, avec la même méthode.</span>
-        <span class="btn" id="level-b1-btn">Découvrir Sprichts B1</span>
-    </a>
+<div class="level-tabs" role="tablist" aria-label="Choisis ton niveau">
+    <button class="level-tab tab-a2" type="button" role="tab" id="tab-a2" aria-controls="panel-a2" aria-selected="true">
+        <span class="lt-name">Sprichts <b>A2</b></span><span class="lt-sub" id="tab-a2-sub">Goethe A2</span>
+    </button>
+    <button class="level-tab tab-b1" type="button" role="tab" id="tab-b1" aria-controls="b1" aria-selected="false" tabindex="-1">
+        <span class="lt-name">Sprichts <b>B1</b></span><span class="lt-sub" id="tab-b1-sub">Bientôt</span>
+    </button>
+</div>
+
+<div class="level-panel" role="tabpanel" id="panel-a2" aria-labelledby="tab-a2">
+    <p class="panel-intro muted">Pour réussir le <strong>Goethe-Zertifikat A2</strong> : parler avec Lukas et Frau Schulz, examen blanc complet.</p>
+    <div class="platforms compact" id="platforms">
+        <div id="release-slot">
+            <section class="card empty platform" id="android">
+                <img class="logo" src="/assets/logo.svg" alt="Sprichts" width="260" height="255">
+                <h2>La première version arrive bientôt</h2>
+                <p class="muted">Reviens très vite pour installer Sprichts sur ton téléphone.</p>
+            </section>
+        </div>
+
+        <section class="card release platform" id="iphone">
+            <div>
+                <div class="platform-badges"><span class="badge purple">Sur iPhone</span><span class="badge you" hidden>Ton téléphone</span></div>
+                <div class="version">iPhone <small>depuis Safari, sans App Store</small></div>
+                <p class="meta">S'installe en 1 minute et s'ouvre ensuite depuis son icône.</p>
+                <div class="cta">
+                    <a class="btn btn-primary" href="https://sprichts.pages.dev/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg> Ouvrir Sprichts dans Safari</a>
+                    <a class="btn" href="https://sprichts.pages.dev/guide/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg> Guide</a>
+                </div>
+            <details class="howto">
+                <summary>Comment l'installer sur iPhone ?</summary>
+                <ol class="ios-steps">
+                    <li><span class="n">1</span><span>Ouvre le lien dans <strong>Safari</strong> (pas dans Chrome ni WhatsApp).</span></li>
+                    <li><span class="n">2</span><span>Touche <strong>Partager</strong> ⬆️ puis <strong>Sur l'écran d'accueil</strong> › Ajouter.</span></li>
+                    <li><span class="n">3</span><span>Ouvre Sprichts depuis son icône et entre ton <strong>code d'accès</strong>.</span></li>
+                    <li><span class="n">4</span><span>Touche <strong>Autoriser</strong> quand Sprichts demande le micro.</span></li>
+                </ol>
+                <p class="small muted">Le lien s'est ouvert dans WhatsApp ? Touche ⋯ ou ⬆️, puis « Ouvrir dans Safari ».</p>
+            </details>
+            </div>
+            <div class="qr">
+                <div class="qr-frame"><img src="/assets/qr-iphone.svg" alt="QR code vers sprichts.pages.dev" width="156" height="156"></div>
+                <p>Avec l'appareil photo de l'iPhone.</p>
+            </div>
+        </section>
+    </div>
+    <div id="older-slot"></div>
+</div>
+
+<div class="level-panel b1-panel" role="tabpanel" id="b1" aria-labelledby="tab-b1" hidden>
+    <p class="panel-intro muted">Pour préparer le <strong>Goethe-Zertifikat B1</strong> : le niveau suivant, avec la même méthode. Codes B1 : 10 chiffres commençant par 8.</p>
+    <div class="platforms compact" id="b1-platforms">
+        <div id="b1-slot">
+            <section class="card platform b1-soon" id="b1-android">
+                <div class="platform-badges"><span class="badge badge-b1">Sprichts B1</span><span class="badge">Bientôt disponible</span></div>
+                <div class="version">Sprichts B1 <small>en préparation</small></div>
+                <ul class="checks">
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Lukas et Frau Schulz <strong>au niveau B1</strong></li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Une <strong>simulation d'examen B1</strong></li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Du <strong>nouveau vocabulaire</strong> B1</li>
+                </ul>
+                <p class="small muted">Le téléchargement apparaîtra ici dès la sortie de la première version.</p>
+            </section>
+        </div>
+
+        <section class="card release platform" id="b1-iphone" hidden>
+            <div>
+                <div class="platform-badges"><span class="badge badge-b1">Sprichts B1</span><span class="badge purple">Sur iPhone</span><span class="badge you" hidden>Ton téléphone</span></div>
+                <div class="version">iPhone <small>depuis Safari, sans App Store</small></div>
+                <p class="meta">S'installe en 1 minute et s'ouvre ensuite depuis son icône.</p>
+                <div class="cta">
+                    <a class="btn btn-primary btn-b1" href="https://sprichts-b1.pages.dev/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg> Ouvrir Sprichts B1 dans Safari</a>
+                    <a class="btn" href="https://sprichts-b1.pages.dev/guide/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg> Guide</a>
+                </div>
+            <details class="howto">
+                <summary>Comment l'installer sur iPhone ?</summary>
+                <ol class="ios-steps">
+                    <li><span class="n">1</span><span>Ouvre le lien dans <strong>Safari</strong> (pas dans Chrome ni WhatsApp).</span></li>
+                    <li><span class="n">2</span><span>Touche <strong>Partager</strong> ⬆️ puis <strong>Sur l'écran d'accueil</strong> › Ajouter.</span></li>
+                    <li><span class="n">3</span><span>Ouvre Sprichts B1 depuis son icône et entre ton <strong>code B1</strong>.</span></li>
+                    <li><span class="n">4</span><span>Touche <strong>Autoriser</strong> quand Sprichts B1 demande le micro.</span></li>
+                </ol>
+                <p class="small muted">Le lien s'est ouvert dans WhatsApp ? Touche ⋯ ou ⬆️, puis « Ouvrir dans Safari ».</p>
+            </details>
+            </div>
+            <div class="qr">
+                <div class="qr-frame"><div id="qr-b1-iphone"></div></div>
+                <p>Avec l'appareil photo de l'iPhone.</p>
+            </div>
+        </section>
+    </div>
+    <div id="b1-older-slot"></div>
 </div>
 <p class="small muted levels-note">Deux applis séparées, chacune avec ses propres codes : un code A2 ne débloque pas Sprichts B1, et inversement.</p>
-
-<!-- ============ Télécharger Sprichts A2 : Android + iPhone ============ -->
-<div class="section-title" id="telecharger">
-    <div>
-        <div class="kicker">Télécharger Sprichts A2</div>
-        <h2>Android ou iPhone : choisis ton téléphone</h2>
-    </div>
-</div>
-<div class="platforms" id="platforms">
-    <div id="release-slot">
-        <section class="card empty platform" id="android">
-            <img class="logo" src="/assets/logo.svg" alt="Sprichts" width="260" height="255">
-            <h2>La première version arrive bientôt</h2>
-            <p class="muted">Reviens très vite pour installer Sprichts sur ton téléphone.</p>
-        </section>
-    </div>
-
-    <section class="card release platform" id="iphone">
-        <div>
-            <div class="platform-badges"><span class="badge purple">Sur iPhone</span><span class="badge you" hidden>Ton téléphone</span></div>
-            <div class="version">Sprichts sur iPhone <small>sans App Store</small></div>
-            <p class="meta">Sprichts s'installe depuis <strong>Safari</strong> en 1 minute et s'ouvre ensuite depuis son icône, comme une vraie appli.</p>
-            <div class="cta">
-                <a class="btn btn-primary" href="https://sprichts.pages.dev/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg> Ouvrir Sprichts dans Safari</a>
-                <a class="btn" href="https://sprichts.pages.dev/guide/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg> Guide d'installation iPhone</a>
-            </div>
-            <ol class="ios-steps">
-                <li><span class="n">1</span><span>Ouvre le lien dans <strong>Safari</strong> (pas dans Chrome ni WhatsApp).</span></li>
-                <li><span class="n">2</span><span>Touche <strong>Partager</strong> ⬆️ puis <strong>Sur l'écran d'accueil</strong> › Ajouter.</span></li>
-                <li><span class="n">3</span><span>Ouvre Sprichts depuis son icône et entre ton <strong>code d'accès</strong>.</span></li>
-                <li><span class="n">4</span><span>Touche <strong>Autoriser</strong> quand Sprichts demande le micro.</span></li>
-            </ol>
-            <p class="small muted">Le lien s'est ouvert dans WhatsApp ? Touche ⋯ ou ⬆️, puis « Ouvrir dans Safari ».</p>
-        </div>
-        <div class="qr">
-            <div class="qr-frame"><img src="/assets/qr-iphone.svg" alt="QR code vers sprichts.pages.dev" width="156" height="156"></div>
-            <p>Scanne ce code avec l'appareil photo de l'iPhone.</p>
-        </div>
-    </section>
-</div>
-
-<!-- ============ Sprichts B1 ============ -->
-<div class="section-title" id="b1">
-    <div>
-        <div class="kicker">Sprichts B1</div>
-        <h2>Le niveau suivant : Goethe-Zertifikat B1</h2>
-    </div>
-</div>
-<div class="platforms" id="b1-platforms">
-    <div id="b1-slot">
-        <section class="card platform b1-soon" id="b1-android">
-            <div class="platform-badges"><span class="badge badge-b1">Sprichts B1</span><span class="badge">Bientôt disponible</span></div>
-            <div class="version">Sprichts B1 <small>en préparation</small></div>
-            <p class="meta">Une appli séparée pour préparer le <strong>Goethe-Zertifikat B1</strong>, avec la même méthode que Sprichts A2 : parler à voix haute, être corrigé en français, progresser chaque jour.</p>
-            <ul class="checks">
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Lukas et Frau Schulz <strong>au niveau B1</strong></li>
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Une <strong>simulation d'examen B1</strong></li>
-                <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg> Du <strong>nouveau vocabulaire</strong> B1</li>
-            </ul>
-            <p class="small muted">Pas encore de téléchargement : il apparaîtra ici dès la sortie de la première version. Sprichts B1 aura ses propres codes d'accès.</p>
-        </section>
-    </div>
-
-    <section class="card release platform" id="b1-iphone" hidden>
-        <div>
-            <div class="platform-badges"><span class="badge badge-b1">Sprichts B1</span><span class="badge purple">Sur iPhone</span><span class="badge you" hidden>Ton téléphone</span></div>
-            <div class="version">Sprichts B1 sur iPhone <small>sans App Store</small></div>
-            <p class="meta">Sprichts B1 s'installe depuis <strong>Safari</strong>, comme Sprichts A2, et s'ouvre ensuite depuis son icône.</p>
-            <div class="cta">
-                <a class="btn btn-primary btn-b1" href="https://sprichts-b1.pages.dev/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg> Ouvrir Sprichts B1 dans Safari</a>
-                <a class="btn" href="https://sprichts-b1.pages.dev/guide/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></svg> Guide d'installation iPhone</a>
-            </div>
-            <ol class="ios-steps">
-                <li><span class="n">1</span><span>Ouvre le lien dans <strong>Safari</strong> (pas dans Chrome ni WhatsApp).</span></li>
-                <li><span class="n">2</span><span>Touche <strong>Partager</strong> ⬆️ puis <strong>Sur l'écran d'accueil</strong> › Ajouter.</span></li>
-                <li><span class="n">3</span><span>Ouvre Sprichts B1 depuis son icône et entre ton <strong>code B1</strong> (10 chiffres, commence par 8).</span></li>
-                <li><span class="n">4</span><span>Touche <strong>Autoriser</strong> quand Sprichts B1 demande le micro.</span></li>
-            </ol>
-        </div>
-        <div class="qr">
-            <div class="qr-frame"><div id="qr-b1-iphone"></div></div>
-            <p>Scanne ce code avec l'appareil photo de l'iPhone.</p>
-        </div>
-    </section>
-</div>
-<div id="b1-older-slot"></div>
+</section>
 
 <!-- ============ Fonctionnalités ============ -->
 <div class="section-title" id="fonctionnalites">
@@ -313,7 +308,7 @@
         <div class="kicker">Installation sur Android</div>
         <h2>Prêt en 4 étapes</h2>
     </div>
-    <a class="btn" href="#iphone">Sur iPhone ? C'est par ici</a>
+    <a class="btn" href="#telecharger">Sur iPhone ? C'est par ici</a>
 </div>
 <div class="steps">
     <div class="card step">
@@ -408,8 +403,6 @@
     <details><summary>Mon code Sprichts A2 marche-t-il dans Sprichts B1 ?</summary><p>Non. Sprichts A2 et Sprichts B1 sont deux applis séparées, chacune avec ses propres codes d'accès : un code A2 ne débloque que Sprichts A2, un code B1 que Sprichts B1. Tes anciens codes (6 ou 10 chiffres) sont des codes A2.</p></details>
     <details><summary>J'ai activé Sprichts avant le 15 novembre</summary><p>Entre une fois ton code d'accès dans Profil › Réglages › Mon accès, avec Internet : ta progression sera aussi sauvegardée en ligne et tu la retrouveras sur un autre appareil.</p></details>
 </section>
-
-<div id="older-slot"></div>
 
 <!-- ============ Équipe ============ -->
 <section class="team">

@@ -85,6 +85,41 @@
 
     applyDevice();
 
+    // ---------- Onglets A2 / B1 ----------
+    var TABS = { a2: ['tab-a2', 'panel-a2'], b1: ['tab-b1', 'b1'] };
+    function selectTab(app, focus) {
+        Object.keys(TABS).forEach(function (k) {
+            var on = k === app;
+            var tab = document.getElementById(TABS[k][0]);
+            tab.setAttribute('aria-selected', on ? 'true' : 'false');
+            tab.tabIndex = on ? 0 : -1;
+            document.getElementById(TABS[k][1]).hidden = !on;
+            if (on && focus) { tab.focus(); }
+        });
+    }
+    function goTo(app) {
+        selectTab(app);
+        document.getElementById('niveaux').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    document.getElementById('tab-a2').addEventListener('click', function () { selectTab('a2'); });
+    document.getElementById('tab-b1').addEventListener('click', function () { selectTab('b1'); });
+    document.querySelector('.level-tabs').addEventListener('keydown', function (e) {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') { return; }
+        e.preventDefault();
+        selectTab(document.getElementById('tab-a2').getAttribute('aria-selected') === 'true' ? 'b1' : 'a2', true);
+    });
+    // Un lien vers « #b1 » ouvre l'onglet B1 ; « #telecharger », « #android », « #iphone » l'onglet A2
+    var HASH_TAB = { '#b1': 'b1', '#telecharger': 'a2', '#android': 'a2', '#iphone': 'a2', '#niveaux': null };
+    document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a[href^="#"]');
+        if (!a || !Object.prototype.hasOwnProperty.call(HASH_TAB, a.getAttribute('href'))) { return; }
+        var app = HASH_TAB[a.getAttribute('href')];
+        e.preventDefault();
+        if (app) { goTo(app); } else { document.getElementById('niveaux').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        history.replaceState(null, '', a.getAttribute('href'));
+    });
+    if (HASH_TAB[location.hash]) { goTo(HASH_TAB[location.hash]); }
+
     // Galerie : flèches
     var gallery = document.getElementById('gallery');
     document.querySelectorAll('[data-scroll]').forEach(function (b) {
@@ -121,20 +156,20 @@
             '<p class="meta">Publiée le ' + fmtDate(latest.created_at) + (latest.size ? ' · ' + fmtSize(latest.size) : '') +
             (total ? ' · ' + total + ' téléchargement' + (total > 1 ? 's' : '') : '') + '</p>' +
             '<a class="btn btn-primary" href="' + dl(latest.id) + '">' + ICON_DOWNLOAD + ' Télécharger v' + name + '</a>' +
-            (latest.notes ? '<div class="notes"><h3>Nouveautés</h3><p>' + nl2br(latest.notes) + '</p></div>' : '') +
+            (latest.notes ? '<details class="howto"><summary>Nouveautés de la v' + name + '</summary><p>' + nl2br(latest.notes) + '</p></details>' : '') +
             '</div><div class="qr"><div class="qr-frame"><div id="qr"></div></div>' +
-            '<p>Sur ordinateur ? Scanne ce code avec ton téléphone Android.</p></div></section>';
+            '<p>Avec ton téléphone Android.</p></div></section>';
+        document.getElementById('tab-a2-sub').textContent = 'v' + latest.version_name;
 
         if (older.length) {
             document.getElementById('older-slot').innerHTML =
-                '<div class="section-title"><div><div class="kicker">Historique</div><h2>Versions précédentes</h2></div></div>' +
-                '<section class="card"><ul class="versions">' +
+                '<details class="card older"><summary>Versions précédentes (' + older.length + ')</summary><ul class="versions">' +
                 older.map(function (v) {
                     return '<li><div><strong>v' + esc(v.version_name) + '</strong>' +
                         '<span class="sub">build ' + Number(v.version_code) + ' · ' + fmtDate(v.created_at) + (v.size ? ' · ' + fmtSize(v.size) : '') + '</span>' +
                         (v.notes ? '<p>' + nl2br(v.notes) + '</p>' : '') + '</div>' +
                         '<a class="btn" href="' + dl(v.id) + '">' + ICON_DOWNLOAD + ' Télécharger</a></li>';
-                }).join('') + '</ul></section>';
+                }).join('') + '</ul></details>';
         }
 
         var el = document.getElementById('qr');
@@ -165,9 +200,7 @@
         hero.b1 = latest;
         updateHero();
 
-        document.getElementById('level-b1-badge').textContent = 'Disponible';
-        document.getElementById('level-b1-btn').textContent = 'Télécharger Sprichts B1';
-        document.getElementById('level-b1-btn').className = 'btn btn-primary btn-b1';
+        document.getElementById('tab-b1-sub').textContent = 'v' + latest.version_name;
 
         document.getElementById('b1-slot').innerHTML =
             '<section class="card release platform" id="b1-android"><div>' +
@@ -177,23 +210,21 @@
             '<p class="meta">Publiée le ' + fmtDate(latest.created_at) + (latest.size ? ' · ' + fmtSize(latest.size) : '') +
             (total ? ' · ' + total + ' téléchargement' + (total > 1 ? 's' : '') : '') + '</p>' +
             '<a class="btn btn-primary" href="' + dl(latest.id, 'b1') + '">' + ICON_DOWNLOAD + ' Télécharger Sprichts B1 v' + name + '</a>' +
-            (latest.notes ? '<div class="notes"><h3>Nouveautés</h3><p>' + nl2br(latest.notes) + '</p></div>' : '') +
-            '<p class="small muted">Il faut un code d\'accès Sprichts B1 (10 chiffres, commence par 8) : un code A2 ne marche pas dans cette appli.</p>' +
+            (latest.notes ? '<details class="howto"><summary>Nouveautés de la v' + name + '</summary><p>' + nl2br(latest.notes) + '</p></details>' : '') +
             '</div><div class="qr"><div class="qr-frame"><div id="qr-b1"></div></div>' +
-            '<p>Sur ordinateur ? Scanne ce code avec ton téléphone Android.</p></div></section>';
+            '<p>Avec ton téléphone Android.</p></div></section>';
 
         document.getElementById('b1-iphone').hidden = false;
 
         if (older.length) {
             document.getElementById('b1-older-slot').innerHTML =
-                '<div class="section-title"><div><div class="kicker">Historique</div><h2>Sprichts B1 : versions précédentes</h2></div></div>' +
-                '<section class="card"><ul class="versions">' +
+                '<details class="card older"><summary>Versions précédentes (' + older.length + ')</summary><ul class="versions">' +
                 older.map(function (v) {
                     return '<li><div><strong>v' + esc(v.version_name) + '</strong>' +
                         '<span class="sub">build ' + Number(v.version_code) + ' · ' + fmtDate(v.created_at) + (v.size ? ' · ' + fmtSize(v.size) : '') + '</span>' +
                         (v.notes ? '<p>' + nl2br(v.notes) + '</p>' : '') + '</div>' +
                         '<a class="btn" href="' + dl(v.id, 'b1') + '">' + ICON_DOWNLOAD + ' Télécharger</a></li>';
-                }).join('') + '</ul></section>';
+                }).join('') + '</ul></details>';
         }
 
         qr('qr-b1', new URL('/download.php?app=b1&id=latest', window.location.href).href);

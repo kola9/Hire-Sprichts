@@ -541,3 +541,64 @@ tbody tr:hover { background: rgba(255,255,255,.03); }
     .levels { grid-template-columns: 1fr; }
     .level .btn { width: 100%; }
 }
+
+/* ---------- Télécharger : onglets A2 / B1, cartes compactes ---------- */
+.level-tabs { display: flex; gap: 6px; padding: 6px; margin: 0 0 14px; width: fit-content; max-width: 100%;
+              border-radius: 20px; background: rgba(10,8,38,.45); border: 1px solid var(--line); }
+.level-tab { flex: 1 1 0; min-width: 150px; min-height: 56px; padding: 8px 22px; border: 0; border-radius: 15px; cursor: pointer;
+             display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1px;
+             font: inherit; color: var(--muted); background: transparent; transition: background .2s ease, color .2s ease; }
+.level-tab:hover { color: var(--text); background: rgba(255,255,255,.05); }
+.level-tab:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.lt-name { font-weight: 700; font-size: 1.05rem; letter-spacing: -.01em; }
+.lt-name b { font-weight: 800; }
+.lt-sub { font-size: .76rem; font-weight: 600; opacity: .85; }
+.tab-a2[aria-selected="true"] { color: #fff; background: linear-gradient(135deg, var(--purple) 0%, #7F52FF 55%, var(--purple-soft) 100%);
+                                box-shadow: 0 10px 26px -10px rgba(106,61,232,.8); }
+.tab-b1[aria-selected="true"] { color: #fff; background: linear-gradient(135deg, #064E3B 0%, #047857 50%, #10B981 100%);
+                                box-shadow: 0 10px 26px -10px rgba(16,185,129,.7); }
+.tab-b1[aria-selected="true"] .lt-sub { color: #FDE68A; }
+.panel-intro { margin: 0 0 14px; font-size: .95rem; }
+.panel-intro strong { color: var(--text); }
+
+.platforms.compact { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+.platforms.compact.ios-first > #iphone, .platforms.compact.ios-first > #b1-iphone { order: -1; }
+.compact > div > .platform, .compact > .platform { height: 100%; }
+.compact .release { grid-template-columns: 1fr auto; gap: 18px; padding: 22px; align-items: start; }
+.compact .version { font-size: 1.7rem; margin: 6px 0 0; }
+.compact .meta { margin: 4px 0 14px; font-size: .88rem; }
+.compact .cta { gap: 8px; }
+.compact .cta .btn { padding: 12px 16px; font-size: .95rem; }
+.compact .btn-primary { padding: 13px 20px; font-size: .98rem; }
+.compact .qr { align-self: center; }
+.compact .qr-frame { padding: 8px; border-radius: 14px; }
+.compact .qr-frame img, .compact .qr-frame canvas { width: 112px !important; height: 112px !important; }
+.compact .qr p { max-width: 128px; margin-top: 8px; font-size: .76rem; }
+.compact .empty { padding: 28px 20px; }
+.compact .b1-soon .checks { margin: 12px 0 10px; gap: 6px; }
+
+.howto { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 10px; }
+.howto summary { cursor: pointer; list-style: none; font-weight: 700; font-size: .9rem; color: var(--muted); padding: 4px 0; }
+.howto summary::-webkit-details-marker { display: none; }
+.howto summary::before { content: "▸ "; color: var(--purple-soft); }
+.howto[open] summary::before { content: "▾ "; }
+.howto summary:hover { color: var(--text); }
+.howto p { margin: 8px 0 0; color: var(--muted); font-size: .9rem; }
+.howto .ios-steps { grid-template-columns: 1fr; margin: 10px 0 8px; }
+.b1-panel .howto summary::before { color: #34D399; }
+
+.older { margin-top: 14px; padding: 14px 22px; }
+.older summary { cursor: pointer; font-weight: 700; color: var(--muted); }
+.older[open] summary { margin-bottom: 12px; }
+.older .versions li:first-child { border-top: 1px solid var(--line); padding-top: 16px; }
+.dl .levels-note { margin-top: 12px; }
+
+@media (max-width: 900px) {
+    .platforms.compact { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+    .level-tabs { width: 100%; }
+    .level-tab { min-width: 0; padding: 8px 14px; }
+    .compact .release { grid-template-columns: 1fr; }
+    .compact .cta .btn { flex: 1 1 auto; }
+}
