@@ -627,3 +627,59 @@ tbody tr:hover { background: rgba(255,255,255,.03); }
     .b1-points li { flex: 0 0 auto; font-size: .8rem; padding: 5px 11px; }
     .gallery-sm { grid-auto-columns: 132px; }
 }
+
+/* ---------- Équipe : carrousel circulaire avec effet zoom ---------- */
+.team-carousel { --gap: 182px; position: relative; max-width: 1060px; margin: 0 auto; overflow: hidden; overflow: clip; padding-bottom: 6px; }
+.tc-card.tc-far { visibility: hidden; }
+.tc-track { list-style: none; margin: 0; padding: 0; position: relative; height: 330px; touch-action: pan-y; user-select: none;
+            perspective: 1200px;
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+                    mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent); }
+.tc-card { --x: 0; --s: 1; --o: 1; --b: 0px; --h: calc(var(--i) * 47 + 255);
+           position: absolute; left: 50%; top: 50%; width: 210px; margin: -118px 0 0 -105px; cursor: pointer;
+           display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 30px 18px 26px; border-radius: 26px;
+           background: linear-gradient(165deg, rgba(255,255,255,.09), rgba(255,255,255,.02)), #16113F; border: 1px solid var(--line);
+           transform: translateX(calc(var(--x) * var(--gap))) rotateY(calc(var(--x) * -14deg)) scale(var(--s));
+           opacity: var(--o); filter: blur(var(--b)) saturate(calc(.55 + var(--o) * .45));
+           transition: transform .7s cubic-bezier(.22,.9,.24,1), opacity .6s ease, filter .6s ease, box-shadow .6s ease, border-color .6s ease; }
+.tc-card.tc-jump { transition: none; }
+.tc-card.is-active { border-color: rgba(244,185,66,.6);
+                     background: linear-gradient(165deg, rgba(127,82,255,.38), rgba(16,185,129,.18) 70%, rgba(255,255,255,.04)), #191348;
+                     box-shadow: 0 30px 70px -24px rgba(106,61,232,.9), 0 0 0 1px rgba(244,185,66,.25) inset; }
+.tc-card.is-active::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none;
+                             background: radial-gradient(120% 70% at 50% 0%, rgba(244,185,66,.24), transparent 60%); }
+.tc-card.is-active::after { content: ""; position: absolute; left: 12%; right: 12%; bottom: -34px; height: 22px; border-radius: 50%;
+                            background: radial-gradient(closest-side, rgba(127,82,255,.55), transparent); filter: blur(6px); pointer-events: none; }
+.tc-avatar { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 10px;
+             font-size: 2rem; font-weight: 800; color: #fff; letter-spacing: -.02em;
+             background: conic-gradient(from 210deg, hsl(var(--h) 85% 62%), hsl(calc(var(--h) + 60) 80% 52%), hsl(var(--h) 85% 62%));
+             box-shadow: 0 12px 28px -10px hsl(var(--h) 85% 50% / .8), 0 0 0 4px rgba(255,255,255,.08); }
+.tc-card.is-active .tc-avatar { animation: tc-pulse 2.4s ease-in-out infinite; }
+.tc-card strong { font-size: 1.2rem; letter-spacing: -.01em; }
+.tc-card small { color: var(--muted); font-size: .82rem; }
+.tc-card.is-active small { color: var(--gold); font-weight: 700; }
+@keyframes tc-pulse { 0%, 100% { box-shadow: 0 12px 28px -10px hsl(var(--h) 85% 50% / .8), 0 0 0 4px rgba(255,255,255,.08); }
+                      50% { box-shadow: 0 12px 34px -8px hsl(var(--h) 85% 55% / 1), 0 0 0 10px rgba(244,185,66,.14); } }
+.tc-arrow { position: absolute; top: 50%; translate: 0 -50%; z-index: 20; width: 46px; height: 46px; border-radius: 50%;
+            display: grid; place-items: center; cursor: pointer; color: var(--text);
+            background: rgba(20,16,60,.75); border: 1px solid var(--line); backdrop-filter: blur(8px);
+            transition: background .2s ease, transform .2s ease; }
+.tc-arrow:hover { background: var(--purple); transform: scale(1.08); }
+.tc-arrow svg { width: 20px; height: 20px; }
+.tc-arrow[data-team="-1"] { left: 4px; }
+.tc-arrow[data-team="1"] { right: 4px; }
+.tc-dots { position: relative; z-index: 30; display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+.tc-dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 99px; cursor: pointer;
+                  background: rgba(255,255,255,.25); transition: width .35s ease, background .35s ease; }
+.tc-dots button[aria-current="true"] { width: 26px; background: linear-gradient(90deg, var(--gold), #34D399); }
+@media (max-width: 680px) {
+    .team-carousel { --gap: 112px; }
+    .tc-track { height: 320px; }
+    .tc-card { width: 172px; margin: -104px 0 0 -86px; padding: 24px 12px 22px; }
+    .tc-avatar { width: 62px; height: 62px; font-size: 1.7rem; }
+    .tc-arrow { width: 40px; height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .tc-card, .tc-dots button { transition: none; }
+    .tc-card.is-active .tc-avatar { animation: none; }
+}

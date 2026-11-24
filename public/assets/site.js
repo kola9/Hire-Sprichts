@@ -129,6 +129,75 @@
         });
     });
 
+    // ---------- Équipe : carrousel circulaire avec effet zoom ----------
+    (function () {
+        var track = document.getElementById('team-track');
+        if (!track) { return; }
+        var cards = Array.prototype.slice.call(track.children);
+        var n = cards.length, current = 0, timer = 0, paused = false;
+        var dots = document.getElementById('team-dots');
+        var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var prevX = cards.map(function () { return 0; });
+        cards.forEach(function (c, i) {
+            var d = document.createElement('button');
+            d.type = 'button';
+            d.setAttribute('aria-label', c.querySelector('strong').textContent);
+            d.addEventListener('click', function () { go(i); });
+            dots.appendChild(d);
+            c.addEventListener('click', function () { go(i); });
+        });
+        function render() {
+            cards.forEach(function (c, i) {
+                var x = ((i - current) % n + n) % n;
+                if (x > n / 2) { x -= n; }
+                var a = Math.abs(x);
+                // la carte qui passe d'un bord à l'autre ne traverse pas le carrousel
+                if (Math.abs(x - prevX[i]) > 1) {
+                    c.classList.add('tc-jump');
+                    void c.offsetWidth;
+                    requestAnimationFrame(function () { requestAnimationFrame(function () { c.classList.remove('tc-jump'); }); });
+                }
+                prevX[i] = x;
+                c.style.setProperty('--x', x);
+                c.style.setProperty('--s', (1.12 - a * 0.16).toFixed(3));
+                c.style.setProperty('--o', a >= 3 ? '0.18' : (1 - a * 0.3).toFixed(2));
+                c.style.setProperty('--b', (a === 0 ? 0 : a * 1.4).toFixed(1) + 'px');
+                c.style.zIndex = String(10 - a);
+                c.classList.toggle('is-active', a === 0);
+                c.classList.toggle('tc-far', a > 3);
+                c.setAttribute('aria-hidden', a === 0 ? 'false' : 'true');
+            });
+            Array.prototype.forEach.call(dots.children, function (d, i) { d.setAttribute('aria-current', i === current ? 'true' : 'false'); });
+        }
+        function go(i) { current = ((i % n) + n) % n; render(); restart(); }
+        function restart() {
+            clearInterval(timer);
+            if (!still) { timer = setInterval(function () { if (!paused && !document.hidden) { current = (current + 1) % n; render(); } }, 3200); }
+        }
+        document.querySelectorAll('[data-team]').forEach(function (b) {
+            b.addEventListener('click', function () { go(current + Number(b.getAttribute('data-team'))); });
+        });
+        var box = track.parentElement;
+        box.addEventListener('mouseenter', function () { paused = true; });
+        box.addEventListener('mouseleave', function () { paused = false; });
+        box.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') { go(current - 1); }
+            if (e.key === 'ArrowRight') { go(current + 1); }
+        });
+        // Glisser au doigt (ou à la souris)
+        var startX = null;
+        track.addEventListener('pointerdown', function (e) { startX = e.clientX; paused = true; });
+        window.addEventListener('pointerup', function (e) {
+            if (startX === null) { return; }
+            var dx = e.clientX - startX;
+            startX = null;
+            paused = e.pointerType === 'mouse' && box.matches(':hover');
+            if (Math.abs(dx) > 40) { go(current + (dx < 0 ? 1 : -1)); }
+        });
+        render();
+        restart();
+    })();
+
     fetch('/api/versions', { headers: { accept: 'application/json' } })
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (data) {

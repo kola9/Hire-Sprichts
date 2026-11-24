@@ -447,12 +447,23 @@
 <section class="team">
     <div class="kicker">L'équipe Sprichts</div>
     <p class="muted">Imaginé et développé par une petite équipe passionnée par l'allemand et l'enseignement.</p>
-    <div class="people">
-        <div><small>Initiateur du projet</small><strong>DJAGOUN Jean-Baptiste</strong></div>
-        <div><small>Associé &amp; développeur</small><strong>DJAGOUN Mickael</strong></div>
-        <div><small>Collaboratrice</small><strong>Sonia</strong></div>
-        <div><small>Collaborateur</small><strong>Rodriguez</strong></div>
+    <div class="team-carousel" aria-roledescription="carrousel" aria-label="L'équipe Sprichts">
+        <button class="tc-arrow" type="button" data-team="-1" aria-label="Personne précédente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg></button>
+        <ul class="tc-track" id="team-track">
+            <li class="tc-card" style="--i:0"><span class="tc-avatar" aria-hidden="true">J</span><strong>Jean-Baptiste</strong><small>Initiateur du projet</small></li>
+            <li class="tc-card" style="--i:1"><span class="tc-avatar" aria-hidden="true">M</span><strong>Mickael</strong><small>Associé &amp; développeur</small></li>
+            <li class="tc-card" style="--i:2"><span class="tc-avatar" aria-hidden="true">S</span><strong>Sonia</strong><small>Collaboratrice</small></li>
+            <li class="tc-card" style="--i:3"><span class="tc-avatar" aria-hidden="true">R</span><strong>Rodriguez</strong><small>Collaborateur</small></li>
+            <li class="tc-card" style="--i:4"><span class="tc-avatar" aria-hidden="true">C</span><strong>Charbel</strong><small>Collaborateur</small></li>
+            <li class="tc-card" style="--i:5"><span class="tc-avatar" aria-hidden="true">B</span><strong>Benoît</strong><small>Collaborateur</small></li>
+            <li class="tc-card" style="--i:6"><span class="tc-avatar" aria-hidden="true">R</span><strong>Rivaldo</strong><small>Collaborateur</small></li>
+            <li class="tc-card" style="--i:7"><span class="tc-avatar" aria-hidden="true">C</span><strong>Chancelle</strong><small>Collaboratrice</small></li>
+            <li class="tc-card" style="--i:8"><span class="tc-avatar" aria-hidden="true">F</span><strong>Fariath</strong><small>Collaboratrice</small></li>
+            <li class="tc-card" style="--i:9"><span class="tc-avatar" aria-hidden="true">Y</span><strong>Yasmine</strong><small>Collaboratrice</small></li>
+        </ul>
+        <button class="tc-arrow" type="button" data-team="1" aria-label="Personne suivante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></button>
     </div>
+    <div class="tc-dots" id="team-dots"></div>
 </section>
 
 <footer class="footer">
