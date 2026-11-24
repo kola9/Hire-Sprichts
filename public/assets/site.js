@@ -54,17 +54,35 @@
             document.getElementById('b1-platforms').classList.add('ios-first');
             document.getElementById('nav-download').hidden = true;
             document.getElementById('nav-ios').hidden = false;
-            document.getElementById('eyebrow-text').textContent = 'Disponible sur iPhone, depuis Safari';
+            document.getElementById('eyebrow-text').textContent = 'Sur iPhone, depuis Safari';
             document.getElementById('hero-cta').innerHTML =
-                '<a class="btn btn-primary" href="https://sprichts.pages.dev/" target="_blank" rel="noopener">' + ICON_SAFARI + ' Ouvrir Sprichts dans Safari</a>' +
-                '<a class="btn btn-ghost" href="#iphone">Comment installer ?</a>';
-            // La version et la taille décrivent l'APK Android : sans intérêt sur iPhone
+                '<a class="btn btn-primary" href="https://sprichts.pages.dev/" target="_blank" rel="noopener">' + ICON_SAFARI + ' Sprichts A2 dans Safari</a>' +
+                (hero.b1
+                    ? '<a class="btn btn-primary btn-b1" href="https://sprichts-b1.pages.dev/" target="_blank" rel="noopener">' + ICON_SAFARI + ' Sprichts B1 dans Safari</a>'
+                    : '<a class="btn btn-ghost" href="#b1">Sprichts B1 : bientôt</a>');
             document.getElementById('hero-chips').innerHTML =
                 '<span class="chip">Sur iPhone <strong>via Safari</strong></span>' +
                 '<span class="chip">Sans <strong>App Store</strong></span>' +
-                '<span class="chip">Niveau <strong>A2</strong></span>';
+                '<span class="chip">Niveaux <strong>A2 et B1</strong></span>';
         }
     }
+    // En-tête commun aux deux applis (les boutons mènent à la section de chaque appli)
+    var hero = { a2: null, b1: null };
+    function updateHero() {
+        var parts = [];
+        if (hero.a2) { parts.push('Sprichts A2 v' + hero.a2.version_name); }
+        if (hero.b1) { parts.push('Sprichts B1 v' + hero.b1.version_name); }
+        document.getElementById('eyebrow-text').textContent = parts.length
+            ? parts.join(' et ') + (parts.length > 1 ? ' disponibles' : ' disponible')
+            : 'Sprichts A2 et Sprichts B1';
+        document.getElementById('hero-cta').innerHTML =
+            '<a class="btn btn-primary" href="#telecharger">' + ICON_ANDROID + ' Sprichts A2</a>' +
+            (hero.b1
+                ? '<a class="btn btn-primary btn-b1" href="#b1">' + ICON_ANDROID + ' Sprichts B1</a>'
+                : '<a class="btn btn-ghost" href="#b1">Sprichts B1 : bientôt</a>');
+        applyDevice();
+    }
+
     applyDevice();
 
     // Galerie : flèches
@@ -92,20 +110,8 @@
         var total = versions.reduce(function (s, v) { return s + (Number(v.downloads) || 0); }, 0);
         var name = esc(latest.version_name);
 
-        var nav = document.getElementById('nav-download');
-        nav.href = dl(latest.id);
-        nav.hidden = false;
-
-        document.getElementById('eyebrow-text').textContent = 'v' + latest.version_name + ' disponible sur Android';
-
-        document.getElementById('hero-cta').innerHTML =
-            '<a class="btn btn-primary" href="' + dl(latest.id) + '">' + ICON_ANDROID + ' Télécharger l\'APK</a>' +
-            '<a class="btn btn-ghost" href="#installer">Comment installer ?</a>';
-
-        document.getElementById('hero-chips').innerHTML =
-            '<span class="chip">Version <strong>v' + name + '</strong></span>' +
-            (latest.size ? '<span class="chip">Taille <strong>' + fmtSize(latest.size) + '</strong></span>' : '') +
-            '<span class="chip">Mise à jour <strong>' + fmtDate(latest.created_at) + '</strong></span>';
+        hero.a2 = latest;
+        updateHero();
 
         document.getElementById('release-slot').innerHTML =
             '<section class="card release platform" id="android"><div>' +
@@ -155,6 +161,9 @@
         var older = versions.slice(1);
         var total = versions.reduce(function (s, v) { return s + (Number(v.downloads) || 0); }, 0);
         var name = esc(latest.version_name);
+
+        hero.b1 = latest;
+        updateHero();
 
         document.getElementById('level-b1-badge').textContent = 'Disponible';
         document.getElementById('level-b1-btn').textContent = 'Télécharger Sprichts B1';
