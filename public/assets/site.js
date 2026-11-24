@@ -124,7 +124,8 @@
     var gallery = document.getElementById('gallery');
     document.querySelectorAll('[data-scroll]').forEach(function (b) {
         b.addEventListener('click', function () {
-            gallery.scrollBy({ left: gallery.clientWidth * 0.8 * Number(b.getAttribute('data-scroll')), behavior: 'smooth' });
+            var g = document.getElementById(b.getAttribute('data-target') || 'gallery');
+            g.scrollBy({ left: g.clientWidth * 0.8 * Number(b.getAttribute('data-scroll')), behavior: 'smooth' });
         });
     });
 
