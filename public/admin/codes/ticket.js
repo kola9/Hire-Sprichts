@@ -5,7 +5,8 @@
 
     var SCALE = 1.5; // dessin en 1280 × 613, exporté en 1920 × 920
     var NAVY_TEXT = '#22183D';
-    var assets = null;
+    var assets = {}; // par niveau : l'icône B1 porte sa pastille orange « B1 »
+    var ICONS = { A2: '/assets/ticket-icon.png', B1: '/assets/ticket-icon-b1.png' };
 
     function image(src) {
         return new Promise(function (resolve, reject) {
@@ -16,16 +17,16 @@
         });
     }
 
-    function load() {
-        if (!assets) {
+    function load(level) {
+        if (!assets[level]) {
             var fonts = ['300', '400', '500', '600', '700'].map(function (w) {
                 // Hors ligne ou police bloquée : la police du téléphone prend le relais
                 return document.fonts.load(w + ' 20px Poppins', 'Allemand é œ').catch(function () {});
             });
-            assets = Promise.all([image('/assets/ticket-icon.png'), image('/assets/logo.svg')].concat(fonts))
-                .catch(function (e) { assets = null; throw e; });
+            assets[level] = Promise.all([image(ICONS[level]), image('/assets/logo.svg')].concat(fonts))
+                .catch(function (e) { assets[level] = null; throw e; });
         }
-        return assets;
+        return assets[level];
     }
 
     function rounded(c, x, y, w, h, r) {
@@ -239,7 +240,7 @@
     /** level : « A2 » (par défaut) ou « B1 ». */
     window.makeTicket = function (display, number, level) {
         level = level === 'B1' ? 'B1' : 'A2';
-        return load().then(function (a) {
+        return load(level).then(function (a) {
             var canvas = document.createElement('canvas');
             canvas.width = 1920;
             canvas.height = 920;
