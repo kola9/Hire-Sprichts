@@ -145,7 +145,7 @@
     function qr(id, text) {
         var el = document.getElementById(id);
         if (el && typeof QRCode !== 'undefined') {
-            new QRCode(el, { text: text, width: 156, height: 156, colorDark: '#1F1C4A', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+            new QRCode(el, { text: text, width: 156, height: 156, colorDark: '#064E3B', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
         }
     }
 
@@ -158,7 +158,7 @@
 
         document.getElementById('level-b1-badge').textContent = 'Disponible';
         document.getElementById('level-b1-btn').textContent = 'Télécharger Sprichts B1';
-        document.getElementById('level-b1-btn').className = 'btn btn-primary';
+        document.getElementById('level-b1-btn').className = 'btn btn-primary btn-b1';
 
         document.getElementById('b1-slot').innerHTML =
             '<section class="card release platform" id="b1-android"><div>' +
@@ -169,7 +169,7 @@
             (total ? ' · ' + total + ' téléchargement' + (total > 1 ? 's' : '') : '') + '</p>' +
             '<a class="btn btn-primary" href="' + dl(latest.id, 'b1') + '">' + ICON_DOWNLOAD + ' Télécharger Sprichts B1 v' + name + '</a>' +
             (latest.notes ? '<div class="notes"><h3>Nouveautés</h3><p>' + nl2br(latest.notes) + '</p></div>' : '') +
-            '<p class="small muted">Il faut un code d\'accès Sprichts B1 : un code A2 ne marche pas dans cette appli.</p>' +
+            '<p class="small muted">Il faut un code d\'accès Sprichts B1 (10 chiffres, commence par 8) : un code A2 ne marche pas dans cette appli.</p>' +
             '</div><div class="qr"><div class="qr-frame"><div id="qr-b1"></div></div>' +
             '<p>Sur ordinateur ? Scanne ce code avec ton téléphone Android.</p></div></section>';
 
