@@ -225,7 +225,7 @@
             '<div class="version">v' + name + ' <small>build ' + Number(latest.version_code) + '</small></div>' +
             '<p class="meta">Publiée le ' + fmtDate(latest.created_at) + (latest.size ? ' · ' + fmtSize(latest.size) : '') +
             (total ? ' · ' + total + ' téléchargement' + (total > 1 ? 's' : '') : '') + '</p>' +
-            '<a class="btn btn-primary" href="' + dl(latest.id) + '">' + ICON_DOWNLOAD + ' Télécharger v' + name + '</a>' +
+            '<a class="btn btn-primary" href="' + dl(latest.id) + '">' + ICON_DOWNLOAD + ' Télécharger Sprichts A2 v' + name + '</a>' +
             (latest.notes ? '<details class="howto"><summary>Nouveautés de la v' + name + '</summary><p>' + nl2br(latest.notes) + '</p></details>' : '') +
             '</div><div class="qr"><div class="qr-frame"><div id="qr"></div></div>' +
             '<p>Avec ton téléphone Android.</p></div></section>';
